@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import ConsumptionChart from "@/components/ConsumptionChart";
 import LogoutButton from "@/components/LogoutButton";
 import ReadingForm from "@/components/ReadingForm";
 import { createClient } from "@/lib/supabase/server";
@@ -58,11 +59,20 @@ export default async function MySitePage() {
         </h1>
 
         <div className="grid gap-6 md:grid-cols-[1fr_2fr]">
-          <section className="rounded border border-neutral-300 bg-neutral-100 p-5">
+          <section className="self-start rounded border border-neutral-300 bg-neutral-100 p-5">
             <ReadingForm today={today} />
           </section>
 
           <section className="rounded border border-neutral-300 bg-neutral-100 p-5">
+            <h2 className="mb-3 font-bold">Consumption by energy type</h2>
+            {error ? (
+              <p className="text-sm text-red-600">Readings could not be loaded.</p>
+            ) : (
+              <ConsumptionChart readings={(readings ?? []) as Reading[]} />
+            )}
+          </section>
+
+          <section className="rounded border border-neutral-300 bg-neutral-100 p-5 md:col-span-2">
             <h2 className="mb-3 font-bold">Readings</h2>
 
             {error ? (
