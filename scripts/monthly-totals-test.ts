@@ -32,6 +32,11 @@ function noNaN(facts: string) {
   return !/NaN|Infinity|undefined/.test(facts);
 }
 
+// Words glued together by a missing space in a template (e.g. "comparisonis").
+function noGluedWords(facts: string) {
+  return !/comparisonis|isposs|nocomparison|readingsthis/i.test(facts);
+}
+
 // Same formula as supabase/seed.sql for Site D (scale 1.2, seed 2.6), seed run on `runDay`:
 // daily readings from 5 months ago until yesterday, +30% electricity this month.
 function seedSiteD(runDay: number): SummaryReading[] {
@@ -115,9 +120,24 @@ function daily(type: string, from: string, to: string, value: number): SummaryRe
   check(
     "Type with no reading this month: stated, no daily average or change",
     !!g && g.currentCount === 0 && g.currentDaily === null && g.changePct === null && !g.lowCoverage &&
-      r.facts.includes("gas (m³): no readings this month, so no comparison is possible") &&
+      r.facts.includes("gas (m³): no readings this month, so no comparison is possible; previous month: 900 m³ (30 readings).") &&
+      noGluedWords(r.facts) &&
       !gasLines.some((l) => l.includes("Daily average")) && noNaN(r.facts),
     `currentDaily ${g?.currentDaily}, change ${g?.changePct}, facts: "${gasLines.join(" / ").trim()}"`
+  );
+}
+
+// 4b. The mirror case: readings this month, none last month.
+{
+  const readings = daily("water", "2026-10-01", "2026-10-04", 8);
+  const r = computeMonthlyTotals(readings, null, new Date(Date.UTC(2026, 9, 5)));
+  const w = find(r.byType, "water");
+  check(
+    "Type with no reading last month: stated, no change computed",
+    !!w && w.currentCount === 4 && w.previousDaily === null && w.changePct === null &&
+      r.facts.includes("  No readings last month, so no comparison is possible.") &&
+      noGluedWords(r.facts) && noNaN(r.facts),
+    `previousDaily ${w?.previousDaily}, change ${w?.changePct}`
   );
 }
 
