@@ -12,11 +12,9 @@ const LINK_BUTTON = "text-teal-700 hover:underline disabled:opacity-50";
 export default function EditableReadingRow({
   reading,
   today,
-  canEdit,
 }: {
   reading: Reading;
   today: string;
-  canEdit: boolean; // readings_update only lets the author edit (created_by = auth.uid())
 }) {
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(String(reading.value));
@@ -108,15 +106,9 @@ export default function EditableReadingRow({
             </form>
           ) : (
             <span className="inline-flex gap-3">
-              {canEdit ? (
-                <button type="button" disabled={pending} onClick={startEdit} className={LINK_BUTTON}>
-                  Edit
-                </button>
-              ) : (
-                <span className="text-xs text-neutral-500" title="Only the person who entered a reading can edit it">
-                  Entered by someone else
-                </span>
-              )}
+              <button type="button" disabled={pending} onClick={startEdit} className={LINK_BUTTON}>
+                Edit
+              </button>
               <button type="button" disabled={pending} onClick={handleDelete} className="text-red-700 hover:underline disabled:opacity-50">
                 {pending ? "…" : "Delete"}
               </button>

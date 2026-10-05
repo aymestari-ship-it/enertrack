@@ -1,26 +1,60 @@
 import { ENERGY_TYPES, ENERGY_UNITS, isEnergyType, type EnergyType } from "@/lib/energy";
+import { formatNumber } from "@/lib/format";
 
 export type SummaryReading = { energy_type: string; value: number; date: string };
+
+// Below this many covered days, the month-to-date comparison is flagged as fragile.
+export const LOW_COVERAGE_DAYS = 3;
+
+export type TypeTotals = {
+  type: EnergyType;
+  unit: string;
+  current: number;
+  currentCount: number;
+  coveredDays: number; // day of month of the latest reading this month; 0 if none
+  previous: number;
+  previousCount: number;
+  currentDaily: number | null; // null when there is nothing to divide
+  previousDaily: number | null;
+  changePct: number | null; // daily average, current vs previous month
+  lowCoverage: boolean;
+};
+
+export type BudgetPace = {
+  budgetKwh: number;
+  usedPct: number;
+  elapsedPct: number; // covered days / days in month
+};
 
 export type MonthlyTotals = {
   currentMonthStart: string; // YYYY-MM-DD
   previousMonthStart: string;
   usableCount: number;
+  byType: TypeTotals[];
+  budgetPace: BudgetPace | null; // electricity only; null without budget or readings
   facts: string; // plain-text figures sent to the LLM
 };
 
-const MONTH_FORMAT = new Intl.DateTimeFormat("en", { month: "long", year: "numeric", timeZone: "UTC" });
+const MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
 
 function isoDay(time: number) {
   return new Date(time).toISOString().slice(0, 10);
 }
 
-function fmt(n: number) {
-  return n.toLocaleString("en", { maximumFractionDigits: 2 });
+function monthName(time: number) {
+  const d = new Date(time);
+  return `${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 }
 
 function pct(n: number) {
   return `${n >= 0 ? "+" : ""}${Math.round(n)}%`;
+}
+
+function days(n: number) {
+  return `${n} day${n === 1 ? "" : "s"}`;
 }
 
 // Month boundaries in UTC, matching the database's current_date.
@@ -30,7 +64,7 @@ export function monthBounds(now = new Date()) {
   return {
     currentStart: Date.UTC(y, m, 1),
     previousStart: Date.UTC(y, m - 1, 1),
-    daysElapsed: now.getUTCDate(),
+    today: Date.UTC(y, m, now.getUTCDate()),
     daysInCurrent: new Date(Date.UTC(y, m + 1, 0)).getUTCDate(),
     daysInPrevious: new Date(Date.UTC(y, m, 0)).getUTCDate(),
   };
@@ -42,6 +76,8 @@ export function previousMonthStart(now = new Date()) {
 }
 
 // All arithmetic happens here; the LLM only explains the resulting figures.
+// The current month is measured over its covered days (up to the latest reading),
+// not up to today: today's reading is often not entered yet.
 export function computeMonthlyTotals(
   readings: SummaryReading[],
   monthlyBudgetKwh: number | null,
@@ -50,16 +86,19 @@ export function computeMonthlyTotals(
   const b = monthBounds(now);
   const currentMonthStart = isoDay(b.currentStart);
   const previousMonthStart = isoDay(b.previousStart);
+  const today = isoDay(b.today);
 
-  const sums = new Map<EnergyType, { current: number; previous: number; cn: number; pn: number }>();
+  type Acc = { current: number; cn: number; lastDay: number; previous: number; pn: number };
+  const sums = new Map<EnergyType, Acc>();
   let usableCount = 0;
 
   for (const r of readings) {
-    if (!isEnergyType(r.energy_type) || r.date < previousMonthStart) continue;
-    const s = sums.get(r.energy_type) ?? { current: 0, previous: 0, cn: 0, pn: 0 };
+    if (!isEnergyType(r.energy_type) || r.date < previousMonthStart || r.date > today) continue;
+    const s = sums.get(r.energy_type) ?? { current: 0, cn: 0, lastDay: 0, previous: 0, pn: 0 };
     if (r.date >= currentMonthStart) {
       s.current += Number(r.value);
       s.cn++;
+      s.lastDay = Math.max(s.lastDay, Number(r.date.slice(8, 10)));
     } else {
       s.previous += Number(r.value);
       s.pn++;
@@ -68,44 +107,86 @@ export function computeMonthlyTotals(
     usableCount++;
   }
 
-  const lines = [
-    `Current month: ${MONTH_FORMAT.format(b.currentStart)}, month to date (day ${b.daysElapsed} of ${b.daysInCurrent}).`,
-    `Previous month: ${MONTH_FORMAT.format(b.previousStart)} (${b.daysInPrevious} days).`,
-    "",
-  ];
-
+  const byType: TypeTotals[] = [];
   for (const type of ENERGY_TYPES) {
     const s = sums.get(type);
     if (!s) continue;
-    const unit = ENERGY_UNITS[type];
-    const current = s.cn
-      ? `${fmt(s.current)} ${unit} month to date (${s.cn} readings)`
+    const currentDaily = s.cn ? s.current / s.lastDay : null;
+    const previousDaily = s.pn ? s.previous / b.daysInPrevious : null;
+    byType.push({
+      type,
+      unit: ENERGY_UNITS[type],
+      current: s.current,
+      currentCount: s.cn,
+      coveredDays: s.lastDay,
+      previous: s.previous,
+      previousCount: s.pn,
+      currentDaily,
+      previousDaily,
+      changePct:
+        currentDaily !== null && previousDaily ? ((currentDaily - previousDaily) / previousDaily) * 100 : null,
+      lowCoverage: s.cn > 0 && s.lastDay < LOW_COVERAGE_DAYS,
+    });
+  }
+
+  const electricity = byType.find((t) => t.type === "electricity");
+  const budgetPace: BudgetPace | null =
+    monthlyBudgetKwh && monthlyBudgetKwh > 0 && electricity?.currentCount
+      ? {
+          budgetKwh: monthlyBudgetKwh,
+          usedPct: (electricity.current / monthlyBudgetKwh) * 100,
+          elapsedPct: (electricity.coveredDays / b.daysInCurrent) * 100,
+        }
+      : null;
+
+  const lines = [
+    `Current month: ${monthName(b.currentStart)} (${b.daysInCurrent} days), in progress.`,
+    `Previous month: ${monthName(b.previousStart)} (${b.daysInPrevious} days).`,
+    "",
+  ];
+
+  for (const t of byType) {
+    const previous = t.previousCount
+      ? `${formatNumber(t.previous)} ${t.unit} (${t.previousCount} readings)`
       : "no readings";
-    const previous = s.pn ? `${fmt(s.previous)} ${unit} (${s.pn} readings)` : "no readings";
-    lines.push(`- ${type} (${unit}): current month: ${current}; previous month: ${previous}.`);
 
-    // Daily averages make a partial month comparable to a full one.
-    if (s.cn && s.pn) {
-      const curDaily = s.current / b.daysElapsed;
-      const prevDaily = s.previous / b.daysInPrevious;
-      const change = prevDaily > 0 ? ` (${pct(((curDaily - prevDaily) / prevDaily) * 100)})` : "";
+    if (!t.currentCount) {
       lines.push(
-        `  Daily average: ${fmt(curDaily)} ${unit}/day this month vs ${fmt(prevDaily)} ${unit}/day last month${change}.`
+        `- ${t.type} (${t.unit}): no readings this month, so no comparison is possible; previous month: ${previous}.`
       );
-    }
-
-    if (type === "electricity") {
-      if (monthlyBudgetKwh && monthlyBudgetKwh > 0) {
-        const used = (s.current / monthlyBudgetKwh) * 100;
-        const elapsed = (b.daysElapsed / b.daysInCurrent) * 100;
+    } else {
+      lines.push(
+        `- ${t.type} (${t.unit}): current month: ${formatNumber(t.current)} ${t.unit} over ${days(t.coveredDays)} covered (${t.currentCount} readings); previous month: ${previous}.`
+      );
+      if (t.currentDaily !== null && t.previousDaily !== null) {
+        const change = t.changePct !== null ? ` (${pct(t.changePct)})` : "";
         lines.push(
-          `  Monthly electricity budget: ${fmt(monthlyBudgetKwh)} kWh; ${Math.round(used)}% used with ${Math.round(elapsed)}% of the month elapsed.`
+          `  Daily average: ${formatNumber(t.currentDaily)} ${t.unit}/day this month vs ${formatNumber(t.previousDaily)} ${t.unit}/day last month${change}.`
         );
       } else {
+        lines.push("  No readings last month, so no comparison is possible.");
+      }
+      if (t.lowCoverage) {
+        lines.push(
+          `  Caution: this month covers only ${days(t.coveredDays)} so far; the comparison rests on very few days.`
+        );
+      }
+    }
+
+    if (t.type === "electricity") {
+      if (!monthlyBudgetKwh || monthlyBudgetKwh <= 0) {
         lines.push("  No monthly electricity budget is set for this site.");
+      } else if (budgetPace) {
+        lines.push(
+          `  Monthly electricity budget: ${formatNumber(budgetPace.budgetKwh)} kWh; ${Math.round(budgetPace.usedPct)}% used after ${days(t.coveredDays)} covered (${Math.round(budgetPace.elapsedPct)}% of the month).`
+        );
+      } else {
+        lines.push(
+          `  Monthly electricity budget: ${formatNumber(monthlyBudgetKwh)} kWh; no readings this month, so budget pace cannot be assessed.`
+        );
       }
     }
   }
 
-  return { currentMonthStart, previousMonthStart, usableCount, facts: lines.join("\n") };
+  return { currentMonthStart, previousMonthStart, usableCount, byType, budgetPace, facts: lines.join("\n") };
 }

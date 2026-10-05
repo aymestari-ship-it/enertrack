@@ -106,13 +106,12 @@ export async function updateReading(input: UpdateReadingInput): Promise<ActionRe
     .select("id");
 
   if (error) {
-    // USING already limits rows to the user's site, so a 42501 here comes from
-    // readings_update's WITH CHECK: created_by = auth.uid().
-    return translateError(
-      error,
-      "Only the person who entered this reading can edit it. Delete it and add a new one instead.",
-      "The reading could not be updated."
-    );
+    // protect_reading_columns (003): site_id, energy_type and created_by are immutable.
+    if (error.code === "P0001") {
+      return { ok: false, error: "Only the value and date of a reading can be changed." };
+    }
+    // readings_update WITH CHECK: the row must stay on a site the user may write to.
+    return translateError(error, "Not allowed for your role.", "The reading could not be updated.");
   }
   // Hidden by RLS (other site or not allowed): no error, 0 rows.
   if (!data?.length) return { ok: false, error: "Reading not found or not allowed." };

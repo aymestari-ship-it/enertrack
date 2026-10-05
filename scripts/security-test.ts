@@ -15,6 +15,7 @@ type Result = { name: string; pass: boolean; detail: string };
 // Dates far in the past so they never collide with real readings.
 const SEED_DATE = "2020-01-01";
 const ATTACK_DATE = "2020-01-02";
+const EDIT_DATE = "2020-01-03";
 const RUN_ID = `SECURITY-TEST-${Date.now()}`;
 
 const results: Result[] = [];
@@ -140,6 +141,31 @@ async function main() {
     run: async () => {
       const { error } = await a.client.from("readings").delete().eq("id", seedA.data.id);
       if (error) manualCleanup.push(`readings ${seedA.data.id}: ${describe(error)}`);
+    },
+  });
+
+  // Seed: a second reading by A on its own site, edited by tests 14-17.
+  const ownA = await a.client
+    .from("readings")
+    .insert({ site_id: siteA, energy_type: "fuel", value: 1, date: EDIT_DATE })
+    .select("id")
+    .single();
+  if (ownA.error) {
+    throw new Error(`Seed by A failed (${describe(ownA.error)}). A reading may already exist on ${EDIT_DATE}; not touching it.`);
+  }
+  cleanups.push({
+    label: "delete A editable reading",
+    run: async () => {
+      // By id. If test 16 failed, the row moved to B's site: only B can delete it then.
+      const byA = await a.client.from("readings").delete().eq("id", ownA.data.id).select("id");
+      if (byA.data?.length) return;
+      const byB = await b.client.from("readings").delete().eq("id", ownA.data.id).select("id");
+      if (byB.data?.length) return;
+      const still = await b.client.from("readings").select("id").eq("id", ownA.data.id);
+      const stillA = await a.client.from("readings").select("id").eq("id", ownA.data.id);
+      if (still.data?.length || stillA.data?.length) {
+        manualCleanup.push(`readings ${ownA.data.id}: could not delete (${describe(byA.error ?? byB.error)})`);
+      }
     },
   });
 
@@ -364,6 +390,72 @@ async function main() {
       `${describe(error)} | rows deleted: ${data?.length ?? 0} | still exists for B: ${check.data?.length === 1}`
     );
   }
+
+  // Tests 14-17 edit A's own reading (ownA): fuel, value 1, site A, created_by A.
+  type ReadingRow = { value: number; energy_type: string; site_id: string; created_by: string };
+  const readOwnA = async (): Promise<ReadingRow | null> => {
+    const { data } = await a.client
+      .from("readings")
+      .select("value, energy_type, site_id, created_by")
+      .eq("id", ownA.data.id)
+      .maybeSingle();
+    return (data as ReadingRow | null) ?? null;
+  };
+
+  // 14. Control: A changes the value of its own reading (must succeed), then restores it.
+  {
+    const { data, error } = await a.client
+      .from("readings")
+      .update({ value: 2 })
+      .eq("id", ownA.data.id)
+      .select("id");
+    const after = await readOwnA();
+    const restore = await a.client.from("readings").update({ value: 1 }).eq("id", ownA.data.id).select("id");
+    const restored = await readOwnA();
+    record(
+      "14. A updates the value of its own reading (must succeed)",
+      !error && data?.length === 1 && Number(after?.value) === 2 && restore.data?.length === 1 && Number(restored?.value) === 1,
+      `${describe(error)} | rows: ${data?.length ?? 0} | value after: ${after?.value ?? "n/a"} | restored to: ${restored?.value ?? "n/a"}`
+    );
+  }
+
+  // 15-17: an immutable column. P0001 is required, not just "an error": before 003,
+  // the old WITH CHECK would also refuse 16 and 17 (42501), which would hide a missing trigger.
+  const immutable: { name: string; patch: Record<string, string>; unchanged: (r: ReadingRow) => boolean }[] = [
+    {
+      name: "15. A changes energy_type of its own reading",
+      patch: { energy_type: "gas" },
+      unchanged: (r) => r.energy_type === "fuel",
+    },
+    {
+      name: "16. A moves its own reading to B's site",
+      patch: { site_id: siteB },
+      unchanged: (r) => r.site_id === siteA,
+    },
+    {
+      name: "17. A sets created_by of its own reading to B",
+      patch: { created_by: b.userId },
+      unchanged: (r) => r.created_by === a.userId,
+    },
+  ];
+  for (const t of immutable) {
+    const { data, error } = await a.client
+      .from("readings")
+      .update(t.patch)
+      .eq("id", ownA.data.id)
+      .select("id");
+    // Re-read as A; after a failed test 16 the row is on B's site, so ask B too.
+    const after = (await readOwnA()) ?? ((await b.client
+      .from("readings")
+      .select("value, energy_type, site_id, created_by")
+      .eq("id", ownA.data.id)
+      .maybeSingle()).data as ReadingRow | null);
+    record(
+      t.name,
+      error?.code === "P0001" && after !== null && t.unchanged(after),
+      `${describe(error)} | rows: ${data?.length ?? 0} | unchanged: ${after ? t.unchanged(after) : "row not found"}`
+    );
+  }
 }
 
 async function run() {
@@ -392,7 +484,7 @@ async function run() {
     console.log("\nMANUAL CLEANUP NEEDED:");
     manualCleanup.forEach((m) => console.log(`  - ${m}`));
   }
-  process.exitCode = crashed || failed || results.length !== 13 ? 1 : 0;
+  process.exitCode = crashed || failed || results.length !== 17 ? 1 : 0;
 }
 
 run();

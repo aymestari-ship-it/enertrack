@@ -11,7 +11,10 @@ Write 2 to 3 sentences in plain English, no markdown, no lists:
 3. one concrete recommendation.
 Use only the figures provided. Never invent numbers, dates, energy types or events.
 If a figure is missing, do not guess it. The current month is partial: compare daily
-averages or budget pace, not raw totals.`;
+averages or budget pace, not raw totals.
+If an energy type has no readings this month, do not compare it.
+If a line says the comparison rests on very few days, say so and that the trend
+cannot be confirmed yet, instead of stating a clear increase or decrease.`;
 
 export class AiConfigError extends Error {}
 export class AiRateLimitError extends Error {}

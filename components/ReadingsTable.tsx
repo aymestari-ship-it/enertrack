@@ -7,11 +7,10 @@ export type Reading = {
   energy_type: string;
   value: number;
   date: string;
-  created_by: string | null;
 };
 
 // Pass `editing` to show Edit/Delete per row (/my-site); omit it for read-only (/sites/[id]).
-export type ReadingsEditing = { today: string; currentUserId: string };
+export type ReadingsEditing = { today: string };
 
 export default function ReadingsTable({
   readings,
@@ -41,7 +40,6 @@ export default function ReadingsTable({
               key={r.id}
               reading={r}
               today={editing.today}
-              canEdit={r.created_by === editing.currentUserId}
             />
           ) : (
             <tr key={r.id} className="border-b border-neutral-200">
