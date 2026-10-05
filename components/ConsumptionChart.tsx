@@ -10,6 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import { ENERGY_TYPES, ENERGY_UNITS, type EnergyType } from "@/lib/energy";
+import { formatDay, formatNumber } from "@/lib/format";
 
 type ChartReading = {
   energy_type: string;
@@ -23,23 +24,10 @@ const GRID = "#e5e5e5";
 const AXIS_TEXT = "#525252";
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-// Dates are calendar days: parse and format them in UTC so the time zone never shifts them.
+// Dates are calendar days: parse them in UTC so the time zone never shifts them.
 function toTime(date: string) {
   const [y, m, d] = date.split("-").map(Number);
   return Date.UTC(y, m - 1, d);
-}
-
-function formatDay(time: number, withYear = false) {
-  return new Date(time).toLocaleDateString("en", {
-    day: "numeric",
-    month: "short",
-    year: withYear ? "numeric" : undefined,
-    timeZone: "UTC",
-  });
-}
-
-function formatValue(value: number) {
-  return value.toLocaleString("en", { maximumFractionDigits: 2 });
 }
 
 // Small multiples: one chart per energy type, each with its own y-axis and unit.
@@ -106,7 +94,7 @@ function EnergyPanel({
               />
               <YAxis
                 unit={` ${unit}`}
-                tickFormatter={(v: number) => formatValue(v)}
+                tickFormatter={(v: number) => formatNumber(v)}
                 tick={{ fontSize: 11, fill: AXIS_TEXT }}
                 axisLine={false}
                 tickLine={false}
@@ -116,7 +104,7 @@ function EnergyPanel({
               <Tooltip
                 cursor={{ stroke: AXIS_TEXT, strokeWidth: 1 }}
                 labelFormatter={(t) => formatDay(Number(t), true)}
-                formatter={(v) => [`${formatValue(Number(v))} ${unit}`, title]}
+                formatter={(v) => [`${formatNumber(Number(v))} ${unit}`, title]}
               />
               <Line
                 type="linear"

@@ -5,6 +5,7 @@ import LogoutButton from "@/components/LogoutButton";
 import ReadingForm from "@/components/ReadingForm";
 import { createClient } from "@/lib/supabase/server";
 import { ENERGY_UNITS, isEnergyType } from "@/lib/energy";
+import { formatNumber } from "@/lib/format";
 
 type Reading = {
   id: string;
@@ -109,7 +110,7 @@ export default async function MySitePage() {
                       <td className="py-2">{r.date}</td>
                       <td className="py-2 capitalize">{r.energy_type}</td>
                       <td className="py-2 text-right tabular-nums">
-                        {Number(r.value).toLocaleString("en")}{" "}
+                        {formatNumber(Number(r.value))}{" "}
                         {isEnergyType(r.energy_type) ? ENERGY_UNITS[r.energy_type] : ""}
                       </td>
                     </tr>

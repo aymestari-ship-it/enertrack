@@ -2,21 +2,13 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { formatTimestampUtc } from "@/lib/format";
 
 export type AiSummary = {
   id: string;
   summary_text: string;
   created_at: string;
 };
-
-// UTC so the server render and the browser render show the same text.
-function formatCreatedAt(iso: string) {
-  return new Date(iso).toLocaleString("en", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "UTC",
-  }) + " UTC";
-}
 
 export default function AiSummaryPanel({
   siteId,
@@ -74,7 +66,7 @@ export default function AiSummaryPanel({
         {latest ? (
           <>
             <p className="leading-relaxed">{latest.summary_text}</p>
-            <p className="mt-2 text-xs text-neutral-500">{formatCreatedAt(latest.created_at)}</p>
+            <p className="mt-2 text-xs text-neutral-500">{formatTimestampUtc(latest.created_at)}</p>
           </>
         ) : (
           <p className="text-sm text-neutral-500">No summary yet.</p>
@@ -88,7 +80,7 @@ export default function AiSummaryPanel({
             {previous.map((s) => (
               <li key={s.id} className="rounded border border-neutral-200 bg-white p-3 text-sm">
                 <p className="text-neutral-800">{s.summary_text}</p>
-                <p className="mt-1 text-xs text-neutral-500">{formatCreatedAt(s.created_at)}</p>
+                <p className="mt-1 text-xs text-neutral-500">{formatTimestampUtc(s.created_at)}</p>
               </li>
             ))}
           </ul>
