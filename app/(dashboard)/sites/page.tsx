@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import AppHeader, { navLinksFor } from "@/components/AppHeader";
 import ArchiveSiteButton from "@/components/ArchiveSiteButton";
+import EditSiteButton from "@/components/EditSiteButton";
 import NewSiteForm from "@/components/NewSiteForm";
 import { getCurrentProfile } from "@/lib/auth";
 import { formatNumber } from "@/lib/format";
@@ -77,7 +78,10 @@ export default async function SitesPage() {
                   </p>
                 </Link>
                 {isDirection && site.status === "active" && (
-                  <ArchiveSiteButton siteId={site.id} siteName={site.name} />
+                  <>
+                    <EditSiteButton site={site} />
+                    <ArchiveSiteButton siteId={site.id} siteName={site.name} />
+                  </>
                 )}
               </li>
             ))}

@@ -26,7 +26,7 @@ export async function getSiteDashboardData(
     supabase.from("sites").select("id, name, location, status").eq("id", siteId).maybeSingle(),
     supabase
       .from("readings")
-      .select("id, energy_type, value, date")
+      .select("id, energy_type, value, date, created_by")
       .eq("site_id", siteId)
       .order("date", { ascending: false })
       .order("energy_type"),

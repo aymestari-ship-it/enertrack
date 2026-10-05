@@ -331,6 +331,39 @@ async function main() {
       `${describe(error)} | rows found by B: ${check.data?.length ?? "n/a"}`
     );
   }
+
+  // 12. Update B's seed reading: RLS hides it -> 0 rows, value unchanged (read by B).
+  // If it went through, the "delete B seed reading" cleanup still removes the row by id.
+  {
+    const { data, error } = await a.client
+      .from("readings")
+      .update({ value: 999 })
+      .eq("id", seedB.data.id)
+      .select("id");
+    const check = await b.client.from("readings").select("value").eq("id", seedB.data.id);
+    const valueAfter = check.data?.[0]?.value;
+    record(
+      "12. A updates a reading of B",
+      (Boolean(error) || data?.length === 0) && check.data?.length === 1 && Number(valueAfter) === 1,
+      `${describe(error)} | rows updated: ${data?.length ?? 0} | value seen by B: ${valueAfter ?? "n/a"}`
+    );
+  }
+
+  // 13. Delete B's seed reading: RLS hides it -> 0 rows, B still sees it.
+  // Targets the seed's id only; the cleanup delete is a no-op if this test failed.
+  {
+    const { data, error } = await a.client
+      .from("readings")
+      .delete()
+      .eq("id", seedB.data.id)
+      .select("id");
+    const check = await b.client.from("readings").select("id").eq("id", seedB.data.id);
+    record(
+      "13. A deletes a reading of B",
+      (Boolean(error) || data?.length === 0) && check.data?.length === 1,
+      `${describe(error)} | rows deleted: ${data?.length ?? 0} | still exists for B: ${check.data?.length === 1}`
+    );
+  }
 }
 
 async function run() {
@@ -359,7 +392,7 @@ async function run() {
     console.log("\nMANUAL CLEANUP NEEDED:");
     manualCleanup.forEach((m) => console.log(`  - ${m}`));
   }
-  process.exitCode = crashed || failed || results.length !== 11 ? 1 : 0;
+  process.exitCode = crashed || failed || results.length !== 13 ? 1 : 0;
 }
 
 run();

@@ -34,6 +34,7 @@ export default async function MySitePage() {
           siteId={me.site_id}
           data={data}
           readingForm={<ReadingForm today={today} />}
+          readingsEditing={{ today, currentUserId: me.id }}
         />
       </main>
     </div>
