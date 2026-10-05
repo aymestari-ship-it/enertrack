@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import AppHeader from "@/components/AppHeader";
+import AppHeader, { navLinksFor } from "@/components/AppHeader";
 import UserRow, { type SiteOption, type UserRowData } from "@/components/UserRow";
 import { getCurrentProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
@@ -19,10 +19,7 @@ export default async function UsersPage() {
     <div className="flex flex-1 flex-col bg-neutral-50 text-neutral-900">
       <AppHeader
         subtitle="Direction · User & Role Management"
-        links={[
-          { href: "/sites", label: "Sites" },
-          { href: "/users", label: "Users" },
-        ]}
+links={navLinksFor(me.role)}
       />
 
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-6">

@@ -1,5 +1,6 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
-import AppHeader from "@/components/AppHeader";
+import AppHeader, { navLinksFor } from "@/components/AppHeader";
 import ArchiveSiteButton from "@/components/ArchiveSiteButton";
 import NewSiteForm from "@/components/NewSiteForm";
 import { getCurrentProfile } from "@/lib/auth";
@@ -36,7 +37,7 @@ export default async function SitesPage() {
     <div className="flex flex-1 flex-col bg-neutral-50 text-neutral-900">
       <AppHeader
         subtitle={`${ROLE_LABELS[me.role]} · Sites`}
-        links={isDirection ? [{ href: "/sites", label: "Sites" }, { href: "/users", label: "Users" }] : []}
+        links={navLinksFor(me.role)}
       />
 
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-6">
@@ -58,8 +59,8 @@ export default async function SitesPage() {
                   site.status === "archived" ? "bg-neutral-100 text-neutral-500" : "bg-white"
                 }`}
               >
-                <div>
-                  <p className="font-semibold">
+                <Link href={`/sites/${site.id}`} className="group flex-1">
+                  <p className="font-semibold group-hover:underline">
                     {site.name}
                     <span
                       className={`ml-2 rounded px-2 py-0.5 text-xs font-normal ${
@@ -74,7 +75,7 @@ export default async function SitesPage() {
                     {site.monthly_budget_kwh != null &&
                       ` · Budget ${formatNumber(Number(site.monthly_budget_kwh))} kWh/month`}
                   </p>
-                </div>
+                </Link>
                 {isDirection && site.status === "active" && (
                   <ArchiveSiteButton siteId={site.id} siteName={site.name} />
                 )}

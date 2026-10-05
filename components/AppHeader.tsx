@@ -1,7 +1,20 @@
 import Link from "next/link";
 import LogoutButton from "@/components/LogoutButton";
+import type { Role } from "@/lib/roles";
 
 export type NavLink = { href: string; label: string };
+
+// Header navigation per role (only routes allowed by proxy.ts).
+export function navLinksFor(role: Role): NavLink[] {
+  if (role === "direction") {
+    return [
+      { href: "/sites", label: "Sites" },
+      { href: "/users", label: "Users" },
+    ];
+  }
+  if (role === "energy_manager") return [{ href: "/sites", label: "Sites" }];
+  return [];
+}
 
 export default function AppHeader({ subtitle, links = [] }: { subtitle: string; links?: NavLink[] }) {
   return (

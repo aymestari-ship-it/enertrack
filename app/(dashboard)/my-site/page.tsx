@@ -1,62 +1,26 @@
 import { redirect } from "next/navigation";
-import AiSummaryPanel, { type AiSummary } from "@/components/AiSummaryPanel";
-import ConsumptionChart from "@/components/ConsumptionChart";
-import LogoutButton from "@/components/LogoutButton";
+import AppHeader from "@/components/AppHeader";
 import ReadingForm from "@/components/ReadingForm";
+import SiteDashboard from "@/components/SiteDashboard";
+import { getCurrentProfile } from "@/lib/auth";
+import { getSiteDashboardData } from "@/lib/siteDashboard";
 import { createClient } from "@/lib/supabase/server";
-import { ENERGY_UNITS, isEnergyType } from "@/lib/energy";
-import { formatNumber } from "@/lib/format";
-
-type Reading = {
-  id: string;
-  energy_type: string;
-  value: number;
-  date: string;
-};
 
 // Screen 3: My Site (Site Manager).
 export default async function MySitePage() {
   const supabase = await createClient();
+  const me = await getCurrentProfile(supabase);
+  if (!me) redirect("/login");
+  if (!me.site_id) redirect("/pending");
 
-  const { data: auth } = await supabase.auth.getClaims();
-  const userId = auth?.claims.sub;
-  if (!userId) redirect("/login");
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("site_id")
-    .eq("id", userId)
-    .maybeSingle();
-  if (!profile?.site_id) redirect("/pending");
-
-  const [{ data: site }, { data: readings, error }, { data: summaries }] = await Promise.all([
-    supabase.from("sites").select("name, location").eq("id", profile.site_id).maybeSingle(),
-    supabase
-      .from("readings")
-      .select("id, energy_type, value, date")
-      .eq("site_id", profile.site_id)
-      .order("date", { ascending: false })
-      .order("energy_type"),
-    supabase
-      .from("ai_summaries")
-      .select("id, summary_text, created_at")
-      .eq("site_id", profile.site_id)
-      .order("created_at", { ascending: false })
-      .limit(10),
-  ]);
+  const { site, ...data } = await getSiteDashboardData(supabase, me.site_id);
 
   // Matches the database's current_date (UTC), used by CHECK (date <= current_date).
   const today = new Date().toISOString().slice(0, 10);
 
   return (
     <div className="flex flex-1 flex-col bg-neutral-50 text-neutral-900">
-      <header className="flex items-center justify-between bg-teal-700 px-6 py-3 text-white">
-        <span className="font-bold">EnerTrack</span>
-        <div className="flex items-center gap-4">
-          <span className="text-sm">Site Manager · My Site</span>
-          <LogoutButton />
-        </div>
-      </header>
+      <AppHeader subtitle="Site Manager · My Site" />
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
         <h1 className="mb-6 text-xl font-bold">
@@ -66,60 +30,11 @@ export default async function MySitePage() {
           )}
         </h1>
 
-        <div className="grid gap-6 md:grid-cols-[1fr_2fr]">
-          <section className="self-start rounded border border-neutral-300 bg-neutral-100 p-5">
-            <ReadingForm today={today} />
-          </section>
-
-          <section className="rounded border border-neutral-300 bg-neutral-100 p-5">
-            <h2 className="mb-3 font-bold">Consumption by energy type</h2>
-            {error ? (
-              <p className="text-sm text-red-600">Readings could not be loaded.</p>
-            ) : (
-              <ConsumptionChart readings={(readings ?? []) as Reading[]} />
-            )}
-          </section>
-
-          <section className="rounded border border-neutral-300 bg-neutral-100 p-5 md:col-span-2">
-            <h2 className="mb-3 font-bold">AI summary</h2>
-            <AiSummaryPanel
-              siteId={profile.site_id}
-              summaries={(summaries ?? []) as AiSummary[]}
-            />
-          </section>
-
-          <section className="rounded border border-neutral-300 bg-neutral-100 p-5 md:col-span-2">
-            <h2 className="mb-3 font-bold">Readings</h2>
-
-            {error ? (
-              <p className="text-sm text-red-600">Readings could not be loaded.</p>
-            ) : !readings?.length ? (
-              <p className="text-sm text-neutral-600">No readings yet.</p>
-            ) : (
-              <table className="w-full text-left text-sm">
-                <thead>
-                  <tr className="border-b border-neutral-300">
-                    <th className="py-2">Date</th>
-                    <th className="py-2">Energy type</th>
-                    <th className="py-2 text-right">Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(readings as Reading[]).map((r) => (
-                    <tr key={r.id} className="border-b border-neutral-200">
-                      <td className="py-2">{r.date}</td>
-                      <td className="py-2 capitalize">{r.energy_type}</td>
-                      <td className="py-2 text-right tabular-nums">
-                        {formatNumber(Number(r.value))}{" "}
-                        {isEnergyType(r.energy_type) ? ENERGY_UNITS[r.energy_type] : ""}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </section>
-        </div>
+        <SiteDashboard
+          siteId={me.site_id}
+          data={data}
+          readingForm={<ReadingForm today={today} />}
+        />
       </main>
     </div>
   );
