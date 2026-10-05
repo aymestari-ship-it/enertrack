@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import AiSummaryPanel, { type AiSummary } from "@/components/AiSummaryPanel";
 import ConsumptionChart from "@/components/ConsumptionChart";
 import LogoutButton from "@/components/LogoutButton";
 import ReadingForm from "@/components/ReadingForm";
@@ -27,7 +28,7 @@ export default async function MySitePage() {
     .maybeSingle();
   if (!profile?.site_id) redirect("/pending");
 
-  const [{ data: site }, { data: readings, error }] = await Promise.all([
+  const [{ data: site }, { data: readings, error }, { data: summaries }] = await Promise.all([
     supabase.from("sites").select("name, location").eq("id", profile.site_id).maybeSingle(),
     supabase
       .from("readings")
@@ -35,6 +36,12 @@ export default async function MySitePage() {
       .eq("site_id", profile.site_id)
       .order("date", { ascending: false })
       .order("energy_type"),
+    supabase
+      .from("ai_summaries")
+      .select("id, summary_text, created_at")
+      .eq("site_id", profile.site_id)
+      .order("created_at", { ascending: false })
+      .limit(10),
   ]);
 
   // Matches the database's current_date (UTC), used by CHECK (date <= current_date).
@@ -70,6 +77,14 @@ export default async function MySitePage() {
             ) : (
               <ConsumptionChart readings={(readings ?? []) as Reading[]} />
             )}
+          </section>
+
+          <section className="rounded border border-neutral-300 bg-neutral-100 p-5 md:col-span-2">
+            <h2 className="mb-3 font-bold">AI summary</h2>
+            <AiSummaryPanel
+              siteId={profile.site_id}
+              summaries={(summaries ?? []) as AiSummary[]}
+            />
           </section>
 
           <section className="rounded border border-neutral-300 bg-neutral-100 p-5 md:col-span-2">
