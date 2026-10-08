@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     summaryText = await generateSummary(totals.facts);
   } catch (error) {
     if (error instanceof AiRateLimitError) {
-      return fail(429, "RATE_LIMITED", "The AI service is busy. Please try again in a minute.");
+      return fail(429, "RATE_LIMITED", "The AI service quota is reached for now. Summaries already generated remain available below. Please try again later.");
     }
     if (error instanceof AiConfigError) {
       console.error("ai-summary:", error.message);

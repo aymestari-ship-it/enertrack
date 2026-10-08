@@ -33,7 +33,8 @@ export async function generateSummary(facts: string): Promise<string> {
     });
     return interaction.output_text?.trim() ?? "";
   } catch (error) {
-    // The SDK already retries 429s with backoff (up to ~30 s) before throwing.
+    // The SDK retries a 429 up to 4 times before throwing: backoff from ~0.5 s, or the
+    // server's Retry-After, each wait capped at 8 s (about 32 s at most in total).
     const status = (error as { status?: number; statusCode?: number }).status
       ?? (error as { statusCode?: number }).statusCode;
     if (status === 429) throw new AiRateLimitError("Gemini rate limit exceeded");

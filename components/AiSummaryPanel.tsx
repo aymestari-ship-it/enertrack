@@ -56,9 +56,6 @@ export default function AiSummaryPanel({
         >
           {pending ? "Generating…" : "Generate AI summary"}
         </button>
-        {pending && (
-          <p className="mt-2 text-sm text-neutral-600">This can take up to 30 seconds.</p>
-        )}
         {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
       </div>
 
