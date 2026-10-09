@@ -37,21 +37,26 @@ function toTime(date: string) {
 }
 
 // Small multiples: one chart per energy type, each with its own y-axis and unit.
-// Grid by number of charts: 1 full width; 2 or 4 in two columns from 768 px;
-// 3 in two columns with the last one full width. Always one column on mobile.
-function gridFor(count: number) {
-  return count === 1 ? "grid gap-4" : "grid gap-4 md:grid-cols-2";
-}
+// Grid by number of charts: 1 full width; 2 or 4 in two columns; 3 in two columns with
+// the last one full width. Two columns from 768 px ("md"), or from 1024 px ("lg") when the
+// charts share the row with the reading form (/my-site). Full class names for Tailwind.
+const LAYOUT = {
+  md: { two: "grid gap-4 md:grid-cols-2", spanLast: "md:col-span-2" },
+  lg: { two: "grid gap-4 lg:grid-cols-2", spanLast: "lg:col-span-2" },
+};
 
 export default function ConsumptionChart({
   readings,
   types = ENERGY_TYPES,
   emptyLabel = "No readings yet",
+  twoColumnsFrom = "md",
 }: {
   readings: ChartReading[];
   types?: readonly EnergyType[]; // charts to show, in this order
   emptyLabel?: string;
+  twoColumnsFrom?: "md" | "lg";
 }) {
+  const grid = LAYOUT[twoColumnsFrom];
   const points = readings.map((r) => ({ ...r, time: toTime(r.date), value: Number(r.value) }));
 
   // Shared time domain so the four charts line up; padded by a day for single points.
@@ -61,11 +66,11 @@ export default function ConsumptionChart({
     : [0, 0];
 
   return (
-    <div className={gridFor(types.length)}>
+    <div className={types.length === 1 ? "grid gap-4" : grid.two}>
       {types.map((type, i) => (
         <EnergyPanel
           key={type}
-          className={types.length === 3 && i === 2 ? "md:col-span-2" : ""}
+          className={types.length === 3 && i === 2 ? grid.spanLast : ""}
           type={type}
           data={points.filter((p) => p.energy_type === type).sort((a, b) => a.time - b.time)}
           domain={domain}

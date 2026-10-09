@@ -176,6 +176,8 @@ export default function ReadingsExplorer({
             <ConsumptionChart
               readings={filtered}
               types={types}
+              // /my-site: the charts share the row with the form, so 2 columns only from 1024 px.
+              twoColumnsFrom={readingForm ? "lg" : "md"}
               emptyLabel={period !== "all" ? "No readings for this period" : "No readings yet"}
             />
           )}
