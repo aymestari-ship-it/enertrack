@@ -29,15 +29,15 @@ links={navLinksFor(me.role)}
           <p className="text-sm text-red-600">Users could not be loaded.</p>
         ) : (
           <div className="overflow-x-auto rounded border border-neutral-300 bg-white px-4">
-            <table className="w-full text-left text-sm">
-              <thead>
+            <table className="w-full text-left text-sm max-sm:block">
+              <thead className="max-sm:hidden">
                 <tr className="border-b border-neutral-300">
                   <th className="py-2">Name</th>
                   <th className="py-2">Role</th>
                   <th className="py-2">Assigned site</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="max-sm:block">
                 {((users ?? []) as UserRowData[]).map((u) => (
                   <UserRow
                     key={u.id}

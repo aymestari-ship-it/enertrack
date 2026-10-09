@@ -13,7 +13,12 @@ export type UserRowData = {
 
 export type SiteOption = { id: string; name: string; status: string };
 
-const SELECT = "rounded border border-neutral-400 bg-white px-2 py-1 text-sm disabled:bg-neutral-100 disabled:text-neutral-500";
+const SELECT =
+  "rounded border border-neutral-400 bg-white px-2 py-1 text-sm disabled:bg-neutral-100 disabled:text-neutral-500 max-sm:w-full max-sm:min-h-11 max-sm:text-base";
+
+// Below 640 px each row is a card: cells stack, and these labels replace the hidden headers.
+const CELL = "max-sm:block max-sm:py-0";
+const MOBILE_LABEL = "mb-1 block text-xs font-semibold text-neutral-600 sm:hidden";
 
 export default function UserRow({
   user,
@@ -40,13 +45,14 @@ export default function UserRow({
   const options = sites.filter((s) => s.status === "active" || s.id === user.site_id);
 
   return (
-    <tr className="border-b border-neutral-200 align-top">
-      <td className="py-3 pr-3">
+    <tr className="border-b border-neutral-200 align-top max-sm:flex max-sm:flex-col max-sm:gap-3 max-sm:py-4">
+      <td className={`py-3 pr-3 font-medium sm:font-normal ${CELL}`}>
         {user.full_name || <span className="text-neutral-500">No name</span>}
         {isMe && <span className="ml-2 rounded bg-teal-100 px-1.5 text-xs text-teal-800">You</span>}
         {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
       </td>
-      <td className="py-3 pr-3">
+      <td className={`py-3 pr-3 ${CELL}`}>
+        <span className={MOBILE_LABEL} aria-hidden="true">Role</span>
         <select
           aria-label="Role"
           value={user.role}
@@ -62,7 +68,8 @@ export default function UserRow({
           ))}
         </select>
       </td>
-      <td className="py-3">
+      <td className={`py-3 ${CELL}`}>
+        <span className={MOBILE_LABEL} aria-hidden="true">Assigned site</span>
         {user.role === "site_manager" ? (
           <select
             aria-label="Assigned site"

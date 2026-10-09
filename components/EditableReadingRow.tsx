@@ -3,11 +3,14 @@
 import { useState, useTransition } from "react";
 import { deleteReading, updateReading } from "@/app/(dashboard)/my-site/actions";
 import type { Reading } from "@/components/ReadingsTable";
+import { ACTIONS_CELL, CELL, ROW, VALUE_CELL } from "@/components/readingsTableStyles";
 import { ENERGY_UNITS, isEnergyType } from "@/lib/energy";
 import { formatNumber } from "@/lib/format";
 
-const INPUT = "rounded border border-neutral-400 bg-white px-2 py-1";
-const LINK_BUTTON = "text-teal-700 hover:underline disabled:opacity-50";
+// Below 640 px: 16 px text (no iOS zoom on focus) and 44 px touch targets.
+const INPUT = "rounded border border-neutral-400 bg-white px-2 py-1 max-sm:min-h-11 max-sm:text-base";
+const MOBILE_BUTTON = "max-sm:min-h-11 max-sm:rounded max-sm:border max-sm:border-neutral-300 max-sm:px-4";
+const LINK_BUTTON = `text-teal-700 hover:underline disabled:opacity-50 ${MOBILE_BUTTON}`;
 
 export default function EditableReadingRow({
   reading,
@@ -55,8 +58,8 @@ export default function EditableReadingRow({
 
   return (
     <>
-      <tr className={`${error ? "" : "border-b"} border-neutral-200`}>
-        <td className="py-2">
+      <tr className={`${ROW} ${error ? "border-b-0" : ""}`}>
+        <td className={CELL}>
           {editing ? (
             <input
               form={formId}
@@ -72,8 +75,8 @@ export default function EditableReadingRow({
             reading.date
           )}
         </td>
-        <td className="py-2 capitalize">{reading.energy_type}</td>
-        <td className="py-2 text-right tabular-nums">
+        <td className={`${CELL} capitalize`}>{reading.energy_type}</td>
+        <td className={VALUE_CELL}>
           {editing ? (
             <span className="inline-flex items-center gap-1">
               <input
@@ -94,13 +97,13 @@ export default function EditableReadingRow({
             `${formatNumber(Number(reading.value))} ${unit}`
           )}
         </td>
-        <td className="py-2 pl-4 text-right whitespace-nowrap">
+        <td className={ACTIONS_CELL}>
           {editing ? (
             <form id={formId} onSubmit={handleSave} className="inline-flex gap-3">
               <button type="submit" disabled={pending} className={LINK_BUTTON}>
                 {pending ? "Saving…" : "Save"}
               </button>
-              <button type="button" disabled={pending} onClick={() => setEditing(false)} className="text-neutral-600 hover:underline">
+              <button type="button" disabled={pending} onClick={() => setEditing(false)} className={`text-neutral-600 hover:underline ${MOBILE_BUTTON}`}>
                 Cancel
               </button>
             </form>
@@ -109,7 +112,7 @@ export default function EditableReadingRow({
               <button type="button" disabled={pending} onClick={startEdit} className={LINK_BUTTON}>
                 Edit
               </button>
-              <button type="button" disabled={pending} onClick={handleDelete} className="text-red-700 hover:underline disabled:opacity-50">
+              <button type="button" disabled={pending} onClick={handleDelete} className={`text-red-700 hover:underline disabled:opacity-50 ${MOBILE_BUTTON}`}>
                 {pending ? "…" : "Delete"}
               </button>
             </span>
@@ -117,8 +120,8 @@ export default function EditableReadingRow({
         </td>
       </tr>
       {error && (
-        <tr className="border-b border-neutral-200">
-          <td colSpan={4} className="pb-2 text-xs text-red-600">
+        <tr className="border-b border-neutral-200 max-sm:block">
+          <td colSpan={4} className="pb-2 text-xs text-red-600 max-sm:block">
             {error}
           </td>
         </tr>

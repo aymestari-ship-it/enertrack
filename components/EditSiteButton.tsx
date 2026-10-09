@@ -11,7 +11,8 @@ type EditableSite = {
   monthly_budget_kwh: number | null;
 };
 
-// Renders as direct children of the site's flex-wrap row: the form wraps to its own line.
+// Renders as direct children of the site's flex-wrap row: the form wraps to its own line,
+// and order-last keeps it after the Archive button so Edit and Archive stay side by side.
 export default function EditSiteButton({ site }: { site: EditableSite }) {
   const [open, setOpen] = useState(false);
 
@@ -21,7 +22,7 @@ export default function EditSiteButton({ site }: { site: EditableSite }) {
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
-        className="rounded border border-neutral-400 px-3 py-1 text-sm hover:bg-neutral-200"
+        className="rounded border border-neutral-400 px-3 py-1 text-sm hover:bg-neutral-200 max-sm:min-h-11"
       >
         Edit
       </button>
@@ -37,7 +38,7 @@ export default function EditSiteButton({ site }: { site: EditableSite }) {
           }}
           onSubmit={(input) => updateSite(site.id, input)}
           onDone={() => setOpen(false)}
-          className="basis-full"
+          className="order-last basis-full"
         />
       )}
     </>

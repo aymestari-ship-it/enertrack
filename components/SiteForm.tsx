@@ -71,7 +71,7 @@ export default function SiteForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded bg-teal-600 px-5 py-2 font-semibold text-white hover:bg-teal-700 disabled:opacity-60"
+          className="rounded bg-teal-600 px-5 py-2 font-semibold text-white hover:bg-teal-700 disabled:opacity-60 max-sm:min-h-11"
         >
           {pending ? pendingLabel : submitLabel}
         </button>
@@ -79,7 +79,7 @@ export default function SiteForm({
           type="button"
           disabled={pending}
           onClick={onDone}
-          className="rounded px-4 py-2 text-sm text-neutral-700 hover:underline"
+          className="rounded px-4 py-2 text-sm text-neutral-700 hover:underline max-sm:min-h-11"
         >
           Cancel
         </button>

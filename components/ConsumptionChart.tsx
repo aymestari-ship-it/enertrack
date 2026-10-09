@@ -23,6 +23,9 @@ const SURFACE = "#ffffff";
 const GRID = "#e5e5e5";
 const AXIS_TEXT = "#525252";
 const DAY_MS = 24 * 60 * 60 * 1000;
+// Above this many points, 8 px dots overlap and hide the line: draw the line only.
+// The hover dot and tooltip stay.
+const MAX_POINTS_WITH_DOTS = 24;
 
 // Dates are calendar days: parse them in UTC so the time zone never shifts them.
 function toTime(date: string) {
@@ -113,7 +116,11 @@ function EnergyPanel({
                 strokeWidth={2}
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                dot={{ r: 4, fill: SERIES_COLOR, stroke: SURFACE, strokeWidth: 2 }}
+                dot={
+                  data.length <= MAX_POINTS_WITH_DOTS
+                    ? { r: 4, fill: SERIES_COLOR, stroke: SURFACE, strokeWidth: 2 }
+                    : false
+                }
                 activeDot={{ r: 5, fill: SERIES_COLOR, stroke: SURFACE, strokeWidth: 2 }}
                 isAnimationActive={false}
               />

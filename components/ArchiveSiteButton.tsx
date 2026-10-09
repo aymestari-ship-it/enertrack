@@ -22,7 +22,7 @@ export default function ArchiveSiteButton({ siteId, siteName }: { siteId: string
         type="button"
         onClick={handleArchive}
         disabled={pending}
-        className="rounded border border-neutral-400 px-3 py-1 text-sm hover:bg-neutral-200 disabled:opacity-60"
+        className="rounded border border-neutral-400 px-3 py-1 text-sm hover:bg-neutral-200 disabled:opacity-60 max-sm:min-h-11"
       >
         {pending ? "Archiving…" : "Archive"}
       </button>

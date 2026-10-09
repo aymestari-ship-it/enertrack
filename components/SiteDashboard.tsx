@@ -19,6 +19,9 @@ export default function SiteDashboard({
   readingsEditing?: ReadingsEditing;
 }) {
   const loadError = <p className="text-sm text-red-600">Readings could not be loaded.</p>;
+  // Only /my-site declares two columns (form + charts). Without the form, spanning 2
+  // columns would create an implicit second column and squeeze the charts to half width.
+  const fullWidth = readingForm ? "md:col-span-2" : "";
 
   return (
     <div className={`grid gap-6 ${readingForm ? "md:grid-cols-[1fr_2fr]" : ""}`}>
@@ -29,12 +32,12 @@ export default function SiteDashboard({
         {data.readingsError ? loadError : <ConsumptionChart readings={data.readings} />}
       </section>
 
-      <section className={`${SECTION} md:col-span-2`}>
+      <section className={`${SECTION} ${fullWidth}`}>
         <h2 className="mb-3 font-bold">AI summary</h2>
         <AiSummaryPanel siteId={siteId} summaries={data.summaries} />
       </section>
 
-      <section className={`${SECTION} md:col-span-2`}>
+      <section className={`${SECTION} ${fullWidth}`}>
         <h2 className="mb-3 font-bold">Readings</h2>
         {data.readingsError ? loadError : <ReadingsTable readings={data.readings} editing={readingsEditing} />}
       </section>
