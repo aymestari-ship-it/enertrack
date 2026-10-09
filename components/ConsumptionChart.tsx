@@ -21,7 +21,13 @@ type ChartReading = {
 
 // Palette values from app/globals.css (recharts writes them as SVG attributes,
 // where CSS variables are not reliably resolved).
-const SERIES_COLOR = "#2e7a74"; // --color-brand
+// One color per energy type (--color-energy-* in globals.css).
+const ENERGY_COLORS: Record<EnergyType, string> = {
+  electricity: "#008a7c",
+  gas: "#c2410c",
+  fuel: "#a21caf",
+  water: "#2563eb",
+};
 const SURFACE = "#ffffff"; // --color-surface
 const GRID = "#dce3e3"; // --color-line
 const AXIS_TEXT = "#4f5b5d"; // --color-muted
@@ -70,11 +76,13 @@ function EnergyPanel({
   domain: [number, number];
 }) {
   const unit = ENERGY_UNITS[type];
+  const color = ENERGY_COLORS[type];
   const title = type.charAt(0).toUpperCase() + type.slice(1);
 
   return (
     <figure className="rounded-lg border border-line bg-surface p-3">
-      <figcaption className="mb-2 text-sm font-semibold text-ink">
+      <figcaption className="mb-2 flex items-center gap-2 text-sm font-semibold text-ink">
+        <span className="h-0.5 w-4 rounded-full" style={{ backgroundColor: color }} aria-hidden="true" />
         {title} <span className="font-normal text-subtle">({unit})</span>
       </figcaption>
 
@@ -113,16 +121,16 @@ function EnergyPanel({
               <Line
                 type="linear"
                 dataKey="value"
-                stroke={SERIES_COLOR}
+                stroke={color}
                 strokeWidth={2}
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 dot={
                   data.length <= MAX_POINTS_WITH_DOTS
-                    ? { r: 4, fill: SERIES_COLOR, stroke: SURFACE, strokeWidth: 2 }
+                    ? { r: 4, fill: color, stroke: SURFACE, strokeWidth: 2 }
                     : false
                 }
-                activeDot={{ r: 5, fill: SERIES_COLOR, stroke: SURFACE, strokeWidth: 2 }}
+                activeDot={{ r: 5, fill: color, stroke: SURFACE, strokeWidth: 2 }}
                 isAnimationActive={false}
               />
             </LineChart>
