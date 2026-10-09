@@ -12,6 +12,7 @@ import {
 import { ENERGY_TYPES, ENERGY_UNITS, type EnergyType } from "@/lib/energy";
 import { formatDay, formatNumber } from "@/lib/format";
 import { EmptyState } from "@/components/ui/Feedback";
+import { ENERGY_COLORS } from "@/components/energyColors";
 
 type ChartReading = {
   energy_type: string;
@@ -21,13 +22,6 @@ type ChartReading = {
 
 // Palette values from app/globals.css (recharts writes them as SVG attributes,
 // where CSS variables are not reliably resolved).
-// One color per energy type (--color-energy-* in globals.css).
-const ENERGY_COLORS: Record<EnergyType, string> = {
-  electricity: "#008a7c",
-  gas: "#c2410c",
-  fuel: "#a21caf",
-  water: "#2563eb",
-};
 const SURFACE = "#ffffff"; // --color-surface
 const GRID = "#dce3e3"; // --color-line
 const AXIS_TEXT = "#4f5b5d"; // --color-muted
@@ -43,11 +37,19 @@ function toTime(date: string) {
 }
 
 // Small multiples: one chart per energy type, each with its own y-axis and unit.
+// Grid by number of charts: 1 full width; 2 or 4 in two columns from 768 px;
+// 3 in two columns with the last one full width. Always one column on mobile.
+function gridFor(count: number) {
+  return count === 1 ? "grid gap-4" : "grid gap-4 md:grid-cols-2";
+}
+
 export default function ConsumptionChart({
   readings,
+  types = ENERGY_TYPES,
   emptyLabel = "No readings yet",
 }: {
   readings: ChartReading[];
+  types?: readonly EnergyType[]; // charts to show, in this order
   emptyLabel?: string;
 }) {
   const points = readings.map((r) => ({ ...r, time: toTime(r.date), value: Number(r.value) }));
@@ -59,10 +61,11 @@ export default function ConsumptionChart({
     : [0, 0];
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
-      {ENERGY_TYPES.map((type) => (
+    <div className={gridFor(types.length)}>
+      {types.map((type, i) => (
         <EnergyPanel
           key={type}
+          className={types.length === 3 && i === 2 ? "md:col-span-2" : ""}
           type={type}
           data={points.filter((p) => p.energy_type === type).sort((a, b) => a.time - b.time)}
           domain={domain}
@@ -78,7 +81,9 @@ function EnergyPanel({
   data,
   domain,
   emptyLabel,
+  className = "",
 }: {
+  className?: string;
   type: EnergyType;
   data: { time: number; value: number }[];
   domain: [number, number];
@@ -89,7 +94,7 @@ function EnergyPanel({
   const title = type.charAt(0).toUpperCase() + type.slice(1);
 
   return (
-    <figure className="rounded-lg border border-line bg-surface p-3">
+    <figure className={`rounded-lg border border-line bg-surface p-3 ${className}`}>
       <figcaption className="mb-2 flex items-center gap-2 text-sm font-semibold text-ink">
         <span className="h-0.5 w-4 rounded-full" style={{ backgroundColor: color }} aria-hidden="true" />
         {title} <span className="font-normal text-subtle">({unit})</span>
