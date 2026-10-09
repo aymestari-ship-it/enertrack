@@ -31,7 +31,7 @@ export default function ReadingForm({ today }: { today: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form id="new-reading" onSubmit={handleSubmit} className="flex flex-col gap-4">
       <h2 className={SECTION_TITLE}>New reading</h2>
 
       <label className="flex flex-col gap-1.5">

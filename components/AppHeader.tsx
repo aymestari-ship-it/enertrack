@@ -2,6 +2,7 @@ import Link from "next/link";
 import HeaderNav from "@/components/HeaderNav";
 import LogoutButton from "@/components/LogoutButton";
 import Logo from "@/components/ui/Logo";
+import { CONTAINER } from "@/components/ui/styles";
 import type { Role } from "@/lib/roles";
 
 export type NavLink = { href: string; label: string };
@@ -32,7 +33,7 @@ export default function AppHeader({
 }) {
   return (
     <header className="bg-brand-dark text-white shadow-sm">
-      <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 sm:px-6">
+      <div className={`${CONTAINER} flex flex-wrap items-center gap-x-6 gap-y-2 py-3`}>
         {/* "/" sends each role to its home page (proxy.ts). */}
         <Link
           href="/"

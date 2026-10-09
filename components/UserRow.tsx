@@ -46,13 +46,13 @@ export default function UserRow({
   const options = sites.filter((s) => s.status === "active" || s.id === user.site_id);
 
   return (
-    <tr className="border-b border-line align-top last:border-b-0 max-sm:flex max-sm:flex-col max-sm:gap-3 max-sm:py-4">
-      <td className={`py-3 pr-3 font-medium sm:font-normal ${CELL}`}>
+    <tr className="border-b border-line/70 align-top last:border-b-0 transition-colors sm:hover:bg-canvas/70 max-sm:flex max-sm:flex-col max-sm:gap-3 max-sm:py-4">
+      <td className={`py-4 pr-3 font-medium text-ink ${CELL}`}>
         {user.full_name || <span className="text-subtle">No name</span>}
         {isMe && <span className={`ml-2 ${BADGE_BRAND}`}>You</span>}
         {error && <p className="mt-1 text-xs text-danger">{error}</p>}
       </td>
-      <td className={`py-3 pr-3 ${CELL}`}>
+      <td className={`py-4 pr-3 ${CELL}`}>
         <span className={MOBILE_LABEL} aria-hidden="true">Role</span>
         <select
           aria-label="Role"
@@ -69,7 +69,7 @@ export default function UserRow({
           ))}
         </select>
       </td>
-      <td className={`py-3 ${CELL}`}>
+      <td className={`py-4 ${CELL}`}>
         <span className={MOBILE_LABEL} aria-hidden="true">Assigned site</span>
         {user.role === "site_manager" ? (
           <select

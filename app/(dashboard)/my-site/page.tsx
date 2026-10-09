@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import AppHeader from "@/components/AppHeader";
 import ReadingForm from "@/components/ReadingForm";
 import SiteDashboard from "@/components/SiteDashboard";
-import { MAIN, PAGE, PAGE_TITLE } from "@/components/ui/styles";
+import SiteHeader from "@/components/SiteHeader";
+import { MAIN, PAGE } from "@/components/ui/styles";
 import { getCurrentProfile } from "@/lib/auth";
 import { getSiteDashboardData } from "@/lib/siteDashboard";
 import { createClient } from "@/lib/supabase/server";
@@ -23,11 +24,14 @@ export default async function MySitePage() {
     <div className={PAGE}>
       <AppHeader role="Site Manager" page="My Site" />
 
-      <main className={`${MAIN} max-w-5xl`}>
-        <div className="mb-6">
-          <h1 className={PAGE_TITLE}>{site?.name ?? "My site"}</h1>
-          {site?.location && <p className="mt-1 text-sm text-subtle">{site.location}</p>}
-        </div>
+      <main className={MAIN}>
+        <SiteHeader
+          name={site?.name ?? "My site"}
+          location={site?.location ?? null}
+          status={site?.status}
+          readings={data.readingsError ? [] : data.readings}
+          budgetKwh={site?.monthly_budget_kwh ?? null}
+        />
 
         <SiteDashboard
           siteId={me.site_id}

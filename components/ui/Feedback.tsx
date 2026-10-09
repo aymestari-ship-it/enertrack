@@ -2,13 +2,22 @@ import type { ReactNode } from "react";
 
 // One look for empty, error, success and loading states across the app.
 
-export function EmptyState({ children, className = "" }: { children: ReactNode; className?: string }) {
+export function EmptyState({
+  children,
+  action,
+  className = "",
+}: {
+  children: ReactNode;
+  action?: ReactNode; // e.g. a button to create the first item
+  className?: string;
+}) {
   return (
-    <p
-      className={`flex items-center justify-center rounded-lg border border-dashed border-line px-4 py-6 text-center text-sm text-subtle ${className}`}
+    <div
+      className={`flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-line bg-canvas/60 px-6 py-10 text-center ${className}`}
     >
-      {children}
-    </p>
+      <p className="text-sm text-subtle">{children}</p>
+      {action}
+    </div>
   );
 }
 

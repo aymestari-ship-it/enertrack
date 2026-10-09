@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import EditableReadingRow from "@/components/EditableReadingRow";
 import { CELL, ROW, TABLE, TBODY, THEAD, VALUE_CELL } from "@/components/readingsTableStyles";
 import { EmptyState } from "@/components/ui/Feedback";
@@ -17,22 +18,24 @@ export type ReadingsEditing = { today: string };
 export default function ReadingsTable({
   readings,
   editing,
+  emptyAction,
 }: {
   readings: Reading[];
   editing?: ReadingsEditing;
+  emptyAction?: ReactNode;
 }) {
   if (!readings.length) {
-    return <EmptyState>No readings yet.</EmptyState>;
+    return <EmptyState action={emptyAction}>No readings yet.</EmptyState>;
   }
 
   return (
     <table className={TABLE}>
       <thead className={THEAD}>
         <tr className="border-b border-line">
-          <th className="pb-2 pr-3 font-medium">Date</th>
-          <th className="pb-2 pr-3 font-medium">Energy type</th>
-          <th className="pb-2 text-right font-medium">Value</th>
-          {editing && <th className="pb-2 pl-4 text-right font-medium">Actions</th>}
+          <th className="pb-3 pl-2 pr-3 font-medium">Date</th>
+          <th className="pb-3 pr-3 font-medium">Energy type</th>
+          <th className="pb-3 text-right font-medium">Value</th>
+          {editing && <th className="pb-3 pl-4 pr-2 text-right font-medium">Actions</th>}
         </tr>
       </thead>
       <tbody className={TBODY}>

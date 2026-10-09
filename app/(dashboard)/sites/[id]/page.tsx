@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import AppHeader, { navLinksFor } from "@/components/AppHeader";
 import SiteDashboard from "@/components/SiteDashboard";
-import { BADGE_NEUTRAL, LINK, MAIN, PAGE, PAGE_TITLE } from "@/components/ui/styles";
+import SiteHeader from "@/components/SiteHeader";
+import { LINK, MAIN, PAGE } from "@/components/ui/styles";
 import { getCurrentProfile } from "@/lib/auth";
 import { ROLE_LABELS } from "@/lib/roles";
 import { getSiteDashboardData } from "@/lib/siteDashboard";
@@ -32,18 +33,19 @@ export default async function SiteDetailPage(props: PageProps<"/sites/[id]">) {
     <div className={PAGE}>
       <AppHeader role={ROLE_LABELS[me.role]} page="Site Detail" links={navLinksFor(me.role)} />
 
-      <main className={`${MAIN} max-w-5xl`}>
-        <Link href={back.href} className={`${LINK} inline-flex min-h-11 items-center text-sm`}>
-          {back.label}
-        </Link>
-
-        <div className="mb-6 mt-1">
-          <h1 className={`${PAGE_TITLE} flex flex-wrap items-center gap-2`}>
-            {site.name}
-            {site.status === "archived" && <span className={BADGE_NEUTRAL}>Archived</span>}
-          </h1>
-          {site.location && <p className="mt-1 text-sm text-subtle">{site.location}</p>}
-        </div>
+      <main className={MAIN}>
+        <SiteHeader
+          name={site.name}
+          location={site.location}
+          status={site.status}
+          readings={data.readingsError ? [] : data.readings}
+          budgetKwh={site.monthly_budget_kwh}
+          before={
+            <Link href={back.href} className={`${LINK} -mt-2 mb-1 inline-flex min-h-11 items-center text-sm`}>
+              {back.label}
+            </Link>
+          }
+        />
 
         <SiteDashboard siteId={site.id} data={data} />
       </main>

@@ -44,8 +44,8 @@ export default async function SitesPage() {
         links={navLinksFor(me.role)}
       />
 
-      <main className={`${MAIN} max-w-4xl`}>
-        <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+      <main className={MAIN}>
+        <div className="mb-6 flex flex-wrap items-start justify-between gap-4 sm:mb-8">
           <h1 className={PAGE_TITLE}>Sites</h1>
           {isDirection && <NewSiteForm />}
         </div>
@@ -55,11 +55,11 @@ export default async function SitesPage() {
         ) : sites.length === 0 ? (
           <EmptyState>No sites yet.</EmptyState>
         ) : (
-          <ul className="flex flex-col gap-3">
+          <ul className="flex flex-col gap-4">
             {sites.map((site) => (
               <li
                 key={site.id}
-                className={`${CARD} flex flex-wrap items-center justify-between gap-3 p-4 sm:px-5 ${
+                className={`${CARD} flex flex-wrap items-center justify-between gap-4 p-5 transition-shadow hover:shadow-md sm:p-6 ${
                   site.status === "archived" ? "bg-panel shadow-none" : ""
                 }`}
               >
@@ -67,7 +67,7 @@ export default async function SitesPage() {
                   href={`/sites/${site.id}`}
                   className="group min-w-0 flex-1 rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                 >
-                  <p className="flex flex-wrap items-center gap-2 font-semibold text-ink group-hover:text-brand">
+                  <p className="flex flex-wrap items-center gap-2 text-lg font-semibold text-ink group-hover:text-brand">
                     {site.name}
                     <span className={site.status === "active" ? BADGE_BRAND : BADGE_NEUTRAL}>
                       {site.status === "active" ? "Active" : "Archived"}

@@ -8,9 +8,9 @@ export default function PendingPage() {
     <div className={PAGE}>
       <AppHeader role="Site Manager" page="Pending" showLogout={false} />
 
-      <main className="flex flex-1 items-center justify-center px-4">
-        <div className={`${CARD} w-full max-w-md p-8 text-center`}>
-          <h1 className="mb-3 text-xl font-semibold text-ink">Account created</h1>
+      <main className="flex flex-1 items-center justify-center px-6 py-10">
+        <div className={`${CARD} w-full max-w-md p-8 text-center sm:p-10`}>
+          <h1 className="mb-3 text-2xl font-semibold tracking-tight text-ink">Account created</h1>
           <p className="text-sm text-muted">Waiting for a site assignment by an administrator.</p>
           <p className="mb-6 text-sm text-muted">You will get access as soon as a site is assigned to you.</p>
           <LogoutButton />

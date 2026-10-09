@@ -8,6 +8,7 @@ export type DashboardSite = {
   name: string;
   location: string | null;
   status: "active" | "archived";
+  monthly_budget_kwh: number | null;
 };
 
 export type SiteDashboardData = {
@@ -23,7 +24,7 @@ export async function getSiteDashboardData(
   siteId: string
 ): Promise<SiteDashboardData> {
   const [{ data: site }, { data: readings, error }, { data: summaries }] = await Promise.all([
-    supabase.from("sites").select("id, name, location, status").eq("id", siteId).maybeSingle(),
+    supabase.from("sites").select("id, name, location, status, monthly_budget_kwh").eq("id", siteId).maybeSingle(),
     supabase
       .from("readings")
       .select("id, energy_type, value, date")

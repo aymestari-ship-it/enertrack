@@ -3,7 +3,7 @@ import AiSummaryPanel from "@/components/AiSummaryPanel";
 import ConsumptionChart from "@/components/ConsumptionChart";
 import ReadingsTable, { type ReadingsEditing } from "@/components/ReadingsTable";
 import { ErrorMessage } from "@/components/ui/Feedback";
-import { CARD, CARD_BODY, SECTION_TITLE } from "@/components/ui/styles";
+import { BUTTON_SECONDARY, CARD, CARD_BODY, SECTION_TITLE } from "@/components/ui/styles";
 import type { SiteDashboardData } from "@/lib/siteDashboard";
 
 const SECTION = `${CARD} ${CARD_BODY}`;
@@ -42,7 +42,21 @@ export default function SiteDashboard({
 
       <section className={`${SECTION} ${fullWidth}`}>
         <h2 className={TITLE}>Readings</h2>
-        {data.readingsError ? loadError : <ReadingsTable readings={data.readings} editing={readingsEditing} />}
+        {data.readingsError ? (
+          loadError
+        ) : (
+          <ReadingsTable
+            readings={data.readings}
+            editing={readingsEditing}
+            emptyAction={
+              readingForm && (
+                <a href="#new-reading" className={BUTTON_SECONDARY}>
+                  Add a reading
+                </a>
+              )
+            }
+          />
+        )}
       </section>
     </div>
   );
