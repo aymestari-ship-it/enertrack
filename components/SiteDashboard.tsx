@@ -4,7 +4,7 @@ import ConsumptionChart from "@/components/ConsumptionChart";
 import ReadingsTable, { type ReadingsEditing } from "@/components/ReadingsTable";
 import type { SiteDashboardData } from "@/lib/siteDashboard";
 
-const SECTION = "rounded border border-neutral-300 bg-neutral-100 p-5";
+const SECTION = "rounded border border-line bg-panel p-5";
 
 // Shared by /my-site (reading form + Edit/Delete) and /sites/[id] (read-only).
 export default function SiteDashboard({
@@ -18,7 +18,7 @@ export default function SiteDashboard({
   readingForm?: ReactNode;
   readingsEditing?: ReadingsEditing;
 }) {
-  const loadError = <p className="text-sm text-red-600">Readings could not be loaded.</p>;
+  const loadError = <p className="text-sm text-danger">Readings could not be loaded.</p>;
   // Only /my-site declares two columns (form + charts). Without the form, spanning 2
   // columns would create an implicit second column and squeeze the charts to half width.
   const fullWidth = readingForm ? "md:col-span-2" : "";

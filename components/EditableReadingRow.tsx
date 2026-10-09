@@ -8,9 +8,9 @@ import { ENERGY_UNITS, isEnergyType } from "@/lib/energy";
 import { formatNumber } from "@/lib/format";
 
 // Below 640 px: 16 px text (no iOS zoom on focus) and 44 px touch targets.
-const INPUT = "rounded border border-neutral-400 bg-white px-2 py-1 max-sm:min-h-11 max-sm:text-base";
-const MOBILE_BUTTON = "max-sm:min-h-11 max-sm:rounded max-sm:border max-sm:border-neutral-300 max-sm:px-4";
-const LINK_BUTTON = `text-teal-700 hover:underline disabled:opacity-50 ${MOBILE_BUTTON}`;
+const INPUT = "rounded border border-line-strong bg-surface px-2 py-1 max-sm:min-h-11 max-sm:text-base";
+const MOBILE_BUTTON = "max-sm:min-h-11 max-sm:rounded max-sm:border max-sm:border-line max-sm:px-4";
+const LINK_BUTTON = `text-brand hover:underline disabled:opacity-50 ${MOBILE_BUTTON}`;
 
 export default function EditableReadingRow({
   reading,
@@ -103,7 +103,7 @@ export default function EditableReadingRow({
               <button type="submit" disabled={pending} className={LINK_BUTTON}>
                 {pending ? "Saving…" : "Save"}
               </button>
-              <button type="button" disabled={pending} onClick={() => setEditing(false)} className={`text-neutral-600 hover:underline ${MOBILE_BUTTON}`}>
+              <button type="button" disabled={pending} onClick={() => setEditing(false)} className={`text-muted hover:underline ${MOBILE_BUTTON}`}>
                 Cancel
               </button>
             </form>
@@ -112,7 +112,7 @@ export default function EditableReadingRow({
               <button type="button" disabled={pending} onClick={startEdit} className={LINK_BUTTON}>
                 Edit
               </button>
-              <button type="button" disabled={pending} onClick={handleDelete} className={`text-red-700 hover:underline disabled:opacity-50 ${MOBILE_BUTTON}`}>
+              <button type="button" disabled={pending} onClick={handleDelete} className={`text-danger hover:underline disabled:opacity-50 ${MOBILE_BUTTON}`}>
                 {pending ? "…" : "Delete"}
               </button>
             </span>
@@ -120,8 +120,8 @@ export default function EditableReadingRow({
         </td>
       </tr>
       {error && (
-        <tr className="border-b border-neutral-200 max-sm:block">
-          <td colSpan={4} className="pb-2 text-xs text-red-600 max-sm:block">
+        <tr className="border-b border-line max-sm:block">
+          <td colSpan={4} className="pb-2 text-xs text-danger max-sm:block">
             {error}
           </td>
         </tr>

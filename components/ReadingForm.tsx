@@ -35,7 +35,7 @@ export default function ReadingForm({ today }: { today: string }) {
       <select
         value={energyType}
         onChange={(e) => setEnergyType(e.target.value as EnergyType)}
-        className="rounded border border-neutral-400 bg-white px-3 py-2"
+        className="rounded border border-line-strong bg-surface px-3 py-2"
       >
         {ENERGY_TYPES.map((type) => (
           <option key={type} value={type}>
@@ -54,7 +54,7 @@ export default function ReadingForm({ today }: { today: string }) {
           placeholder="Value"
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          className="w-full rounded border border-neutral-400 bg-white px-3 py-2"
+          className="w-full rounded border border-line-strong bg-surface px-3 py-2"
         />
         <span className="w-10 text-sm">{ENERGY_UNITS[energyType]}</span>
       </div>
@@ -65,16 +65,16 @@ export default function ReadingForm({ today }: { today: string }) {
         max={today}
         value={date}
         onChange={(e) => setDate(e.target.value)}
-        className="rounded border border-neutral-400 bg-white px-3 py-2"
+        className="rounded border border-line-strong bg-surface px-3 py-2"
       />
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      {saved && <p className="text-sm text-teal-700">Reading saved.</p>}
+      {error && <p className="text-sm text-danger">{error}</p>}
+      {saved && <p className="text-sm text-brand">Reading saved.</p>}
 
       <button
         type="submit"
         disabled={pending}
-        className="self-start rounded bg-teal-600 px-6 py-2 font-semibold text-white hover:bg-teal-700 disabled:opacity-60"
+        className="self-start rounded bg-brand px-6 py-2 font-semibold text-white hover:bg-brand-hover disabled:opacity-60"
       >
         {pending ? "Saving…" : "Submit"}
       </button>

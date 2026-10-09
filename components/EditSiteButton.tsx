@@ -22,7 +22,7 @@ export default function EditSiteButton({ site }: { site: EditableSite }) {
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
-        className="rounded border border-neutral-400 px-3 py-1 text-sm hover:bg-neutral-200 max-sm:min-h-11"
+        className="rounded border border-line-strong px-3 py-1 text-sm hover:bg-panel max-sm:min-h-11"
       >
         Edit
       </button>

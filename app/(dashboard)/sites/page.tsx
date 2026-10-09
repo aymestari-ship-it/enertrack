@@ -35,7 +35,7 @@ export default async function SitesPage() {
   const isDirection = me.role === "direction";
 
   return (
-    <div className="flex flex-1 flex-col bg-neutral-50 text-neutral-900">
+    <div className="flex flex-1 flex-col bg-canvas text-ink">
       <AppHeader
         subtitle={`${ROLE_LABELS[me.role]} · Sites`}
         links={navLinksFor(me.role)}
@@ -48,16 +48,16 @@ export default async function SitesPage() {
         </div>
 
         {error ? (
-          <p className="text-sm text-red-600">Sites could not be loaded.</p>
+          <p className="text-sm text-danger">Sites could not be loaded.</p>
         ) : sites.length === 0 ? (
-          <p className="text-sm text-neutral-600">No sites yet.</p>
+          <p className="text-sm text-muted">No sites yet.</p>
         ) : (
           <ul className="flex flex-col gap-3">
             {sites.map((site) => (
               <li
                 key={site.id}
-                className={`flex flex-wrap items-center justify-between gap-3 rounded border border-neutral-300 p-4 ${
-                  site.status === "archived" ? "bg-neutral-100 text-neutral-500" : "bg-white"
+                className={`flex flex-wrap items-center justify-between gap-3 rounded border border-line p-4 ${
+                  site.status === "archived" ? "bg-panel text-subtle" : "bg-surface"
                 }`}
               >
                 <Link href={`/sites/${site.id}`} className="group flex-1">
@@ -65,13 +65,13 @@ export default async function SitesPage() {
                     {site.name}
                     <span
                       className={`ml-2 rounded px-2 py-0.5 text-xs font-normal ${
-                        site.status === "active" ? "bg-teal-100 text-teal-800" : "bg-neutral-200 text-neutral-600"
+                        site.status === "active" ? "bg-brand-soft text-brand-ink" : "bg-line text-muted"
                       }`}
                     >
                       {site.status === "active" ? "Active" : "Archived"}
                     </span>
                   </p>
-                  <p className="text-sm text-neutral-600">
+                  <p className="text-sm text-muted">
                     {site.location ?? "No location"}
                     {site.monthly_budget_kwh != null &&
                       ` · Budget ${formatNumber(Number(site.monthly_budget_kwh))} kWh/month`}

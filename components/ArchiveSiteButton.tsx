@@ -22,11 +22,11 @@ export default function ArchiveSiteButton({ siteId, siteName }: { siteId: string
         type="button"
         onClick={handleArchive}
         disabled={pending}
-        className="rounded border border-neutral-400 px-3 py-1 text-sm hover:bg-neutral-200 disabled:opacity-60 max-sm:min-h-11"
+        className="rounded border border-line-strong px-3 py-1 text-sm hover:bg-panel disabled:opacity-60 max-sm:min-h-11"
       >
         {pending ? "Archiving…" : "Archive"}
       </button>
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      {error && <p className="text-xs text-danger">{error}</p>}
     </div>
   );
 }

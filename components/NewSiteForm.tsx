@@ -12,7 +12,7 @@ export default function NewSiteForm() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="rounded bg-teal-600 px-4 py-2 font-semibold text-white hover:bg-teal-700"
+        className="rounded bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-hover"
       >
         + New site
       </button>

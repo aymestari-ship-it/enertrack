@@ -16,7 +16,7 @@ export default async function UsersPage() {
   ]);
 
   return (
-    <div className="flex flex-1 flex-col bg-neutral-50 text-neutral-900">
+    <div className="flex flex-1 flex-col bg-canvas text-ink">
       <AppHeader
         subtitle="Direction · User & Role Management"
 links={navLinksFor(me.role)}
@@ -26,12 +26,12 @@ links={navLinksFor(me.role)}
         <h1 className="mb-6 text-xl font-bold">Users</h1>
 
         {error ? (
-          <p className="text-sm text-red-600">Users could not be loaded.</p>
+          <p className="text-sm text-danger">Users could not be loaded.</p>
         ) : (
-          <div className="overflow-x-auto rounded border border-neutral-300 bg-white px-4">
+          <div className="overflow-x-auto rounded border border-line bg-surface px-4">
             <table className="w-full text-left text-sm max-sm:block">
               <thead className="max-sm:hidden">
-                <tr className="border-b border-neutral-300">
+                <tr className="border-b border-line">
                   <th className="py-2">Name</th>
                   <th className="py-2">Role</th>
                   <th className="py-2">Assigned site</th>

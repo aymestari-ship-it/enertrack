@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import type { NewSiteInput } from "@/app/(dashboard)/sites/actions";
 import type { ActionResult } from "@/lib/actionResult";
 
-const INPUT = "rounded border border-neutral-400 bg-white px-3 py-2";
+const INPUT = "rounded border border-line-strong bg-surface px-3 py-2";
 
 // Name / location / monthly budget fields, shared by "+ New site" and "Edit".
 export default function SiteForm({
@@ -43,7 +43,7 @@ export default function SiteForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className={`flex flex-col gap-3 rounded border border-neutral-300 bg-neutral-100 p-4 text-neutral-900 ${className}`}
+      className={`flex flex-col gap-3 rounded border border-line bg-panel p-4 text-ink ${className}`}
     >
       <h2 className="font-bold">{title}</h2>
       <div className="grid gap-3 sm:grid-cols-3">
@@ -65,13 +65,13 @@ export default function SiteForm({
         </div>
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-danger">{error}</p>}
 
       <div className="flex gap-3">
         <button
           type="submit"
           disabled={pending}
-          className="rounded bg-teal-600 px-5 py-2 font-semibold text-white hover:bg-teal-700 disabled:opacity-60 max-sm:min-h-11"
+          className="rounded bg-brand px-5 py-2 font-semibold text-white hover:bg-brand-hover disabled:opacity-60 max-sm:min-h-11"
         >
           {pending ? pendingLabel : submitLabel}
         </button>
@@ -79,7 +79,7 @@ export default function SiteForm({
           type="button"
           disabled={pending}
           onClick={onDone}
-          className="rounded px-4 py-2 text-sm text-neutral-700 hover:underline max-sm:min-h-11"
+          className="rounded px-4 py-2 text-sm text-muted hover:underline max-sm:min-h-11"
         >
           Cancel
         </button>

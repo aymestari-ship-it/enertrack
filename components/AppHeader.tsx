@@ -18,7 +18,7 @@ export function navLinksFor(role: Role): NavLink[] {
 
 export default function AppHeader({ subtitle, links = [] }: { subtitle: string; links?: NavLink[] }) {
   return (
-    <header className="flex flex-wrap items-center justify-between gap-3 bg-teal-700 px-6 py-3 text-white">
+    <header className="flex flex-wrap items-center justify-between gap-3 bg-brand-dark px-6 py-3 text-white">
       <div className="flex items-center gap-6">
         <span className="font-bold">EnerTrack</span>
         {links.length > 0 && (

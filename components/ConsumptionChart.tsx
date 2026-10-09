@@ -18,10 +18,12 @@ type ChartReading = {
   date: string; // YYYY-MM-DD
 };
 
-const SERIES_COLOR = "#0d9488"; // teal-600, validated against the white panel
-const SURFACE = "#ffffff";
-const GRID = "#e5e5e5";
-const AXIS_TEXT = "#525252";
+// Palette values from app/globals.css (recharts writes them as SVG attributes,
+// where CSS variables are not reliably resolved).
+const SERIES_COLOR = "#2e7a74"; // --color-brand
+const SURFACE = "#ffffff"; // --color-surface
+const GRID = "#dce3e3"; // --color-line
+const AXIS_TEXT = "#4f5b5d"; // --color-muted
 const DAY_MS = 24 * 60 * 60 * 1000;
 // Above this many points, 8 px dots overlap and hide the line: draw the line only.
 // The hover dot and tooltip stay.
@@ -70,13 +72,13 @@ function EnergyPanel({
   const title = type.charAt(0).toUpperCase() + type.slice(1);
 
   return (
-    <figure className="rounded border border-neutral-300 bg-white p-3">
+    <figure className="rounded border border-line bg-surface p-3">
       <figcaption className="mb-2 text-sm font-semibold">
-        {title} <span className="font-normal text-neutral-500">({unit})</span>
+        {title} <span className="font-normal text-subtle">({unit})</span>
       </figcaption>
 
       {data.length === 0 ? (
-        <p className="flex h-40 items-center justify-center text-sm text-neutral-500">
+        <p className="flex h-40 items-center justify-center text-sm text-subtle">
           No readings yet
         </p>
       ) : (

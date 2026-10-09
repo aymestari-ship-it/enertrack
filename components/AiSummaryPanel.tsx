@@ -52,21 +52,21 @@ export default function AiSummaryPanel({
           type="button"
           onClick={handleGenerate}
           disabled={pending}
-          className="rounded bg-teal-600 px-5 py-2 font-semibold text-white hover:bg-teal-700 disabled:opacity-60"
+          className="rounded bg-brand px-5 py-2 font-semibold text-white hover:bg-brand-hover disabled:opacity-60"
         >
           {pending ? "Generating…" : "Generate AI summary"}
         </button>
-        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-2 text-sm text-danger">{error}</p>}
       </div>
 
-      <div className="rounded border border-neutral-300 bg-white p-4" aria-live="polite">
+      <div className="rounded border border-line bg-surface p-4" aria-live="polite">
         {latest ? (
           <>
             <p className="leading-relaxed">{latest.summary_text}</p>
-            <p className="mt-2 text-xs text-neutral-500">{formatTimestampUtc(latest.created_at)}</p>
+            <p className="mt-2 text-xs text-subtle">{formatTimestampUtc(latest.created_at)}</p>
           </>
         ) : (
-          <p className="text-sm text-neutral-500">No summary yet.</p>
+          <p className="text-sm text-subtle">No summary yet.</p>
         )}
       </div>
 
@@ -75,9 +75,9 @@ export default function AiSummaryPanel({
           <h3 className="mb-2 text-sm font-semibold">Previous summaries</h3>
           <ul className="flex flex-col gap-2">
             {previous.map((s) => (
-              <li key={s.id} className="rounded border border-neutral-200 bg-white p-3 text-sm">
-                <p className="text-neutral-800">{s.summary_text}</p>
-                <p className="mt-1 text-xs text-neutral-500">{formatTimestampUtc(s.created_at)}</p>
+              <li key={s.id} className="rounded border border-line bg-surface p-3 text-sm">
+                <p className="text-ink">{s.summary_text}</p>
+                <p className="mt-1 text-xs text-subtle">{formatTimestampUtc(s.created_at)}</p>
               </li>
             ))}
           </ul>

@@ -28,21 +28,21 @@ export default async function SiteDetailPage(props: PageProps<"/sites/[id]">) {
     : { href: "/sites", label: "← All sites" };
 
   return (
-    <div className="flex flex-1 flex-col bg-neutral-50 text-neutral-900">
+    <div className="flex flex-1 flex-col bg-canvas text-ink">
       <AppHeader subtitle={`${ROLE_LABELS[me.role]} · Site Detail`} links={navLinksFor(me.role)} />
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
-        <Link href={back.href} className="text-sm text-teal-700 hover:underline">
+        <Link href={back.href} className="text-sm text-brand hover:underline">
           {back.label}
         </Link>
 
         <h1 className="mb-6 mt-2 text-xl font-bold">
           {site.name}
           {site.location && (
-            <span className="ml-2 text-base font-normal text-neutral-600">{site.location}</span>
+            <span className="ml-2 text-base font-normal text-muted">{site.location}</span>
           )}
           {site.status === "archived" && (
-            <span className="ml-2 rounded bg-neutral-200 px-2 py-0.5 align-middle text-xs font-normal text-neutral-600">
+            <span className="ml-2 rounded bg-line px-2 py-0.5 align-middle text-xs font-normal text-muted">
               Archived
             </span>
           )}

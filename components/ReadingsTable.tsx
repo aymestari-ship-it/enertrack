@@ -21,13 +21,13 @@ export default function ReadingsTable({
   editing?: ReadingsEditing;
 }) {
   if (!readings.length) {
-    return <p className="text-sm text-neutral-600">No readings yet.</p>;
+    return <p className="text-sm text-muted">No readings yet.</p>;
   }
 
   return (
     <table className={TABLE}>
       <thead className={THEAD}>
-        <tr className="border-b border-neutral-300">
+        <tr className="border-b border-line">
           <th className="py-2">Date</th>
           <th className="py-2">Energy type</th>
           <th className="py-2 text-right">Value</th>

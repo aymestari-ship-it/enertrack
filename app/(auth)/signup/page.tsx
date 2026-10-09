@@ -47,11 +47,11 @@ export default function SignupPage() {
 
   if (checkEmail) {
     return (
-      <main className="flex flex-1 items-center justify-center bg-white px-4 text-neutral-900">
+      <main className="flex flex-1 items-center justify-center bg-surface px-4 text-ink">
         <div className="w-full max-w-xs text-center">
-          <h1 className="mb-4 text-2xl font-bold text-teal-700">EnerTrack</h1>
+          <h1 className="mb-4 text-2xl font-bold text-brand">EnerTrack</h1>
           <p>Check your email to confirm your account, then log in.</p>
-          <Link href="/login" className="mt-4 inline-block text-sm text-teal-700 underline">
+          <Link href="/login" className="mt-4 inline-block text-sm text-brand underline">
             Back to log in
           </Link>
         </div>
@@ -60,9 +60,9 @@ export default function SignupPage() {
   }
 
   return (
-    <main className="flex flex-1 items-center justify-center bg-white px-4 text-neutral-900">
+    <main className="flex flex-1 items-center justify-center bg-surface px-4 text-ink">
       <form onSubmit={handleSubmit} className="flex w-full max-w-xs flex-col gap-3">
-        <h1 className="mb-4 text-center text-2xl font-bold text-teal-700">EnerTrack</h1>
+        <h1 className="mb-4 text-center text-2xl font-bold text-brand">EnerTrack</h1>
 
         <input
           type="text"
@@ -71,7 +71,7 @@ export default function SignupPage() {
           required
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
-          className="rounded border border-neutral-400 bg-neutral-100 px-3 py-2"
+          className="rounded border border-line-strong bg-panel px-3 py-2"
         />
         <input
           type="email"
@@ -80,7 +80,7 @@ export default function SignupPage() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="rounded border border-neutral-400 bg-neutral-100 px-3 py-2"
+          className="rounded border border-line-strong bg-panel px-3 py-2"
         />
         <input
           type="password"
@@ -90,22 +90,22 @@ export default function SignupPage() {
           minLength={6}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="rounded border border-neutral-400 bg-neutral-100 px-3 py-2"
+          className="rounded border border-line-strong bg-panel px-3 py-2"
         />
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-danger">{error}</p>}
 
         <button
           type="submit"
           disabled={loading}
-          className="mt-2 rounded bg-teal-600 py-2 font-semibold text-white hover:bg-teal-700 disabled:opacity-60"
+          className="mt-2 rounded bg-brand py-2 font-semibold text-white hover:bg-brand-hover disabled:opacity-60"
         >
           {loading ? "Signing up…" : "Sign up"}
         </button>
 
         <p className="text-center text-sm">
           Already have an account?{" "}
-          <Link href="/login" className="text-teal-700 underline">
+          <Link href="/login" className="text-brand underline">
             Log in
           </Link>
         </p>
