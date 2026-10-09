@@ -19,13 +19,15 @@ export default function ReadingsTable({
   readings,
   editing,
   emptyAction,
+  emptyMessage = "No readings yet.",
 }: {
   readings: Reading[];
   editing?: ReadingsEditing;
   emptyAction?: ReactNode;
+  emptyMessage?: string;
 }) {
   if (!readings.length) {
-    return <EmptyState action={emptyAction}>No readings yet.</EmptyState>;
+    return <EmptyState action={emptyAction}>{emptyMessage}</EmptyState>;
   }
 
   return (

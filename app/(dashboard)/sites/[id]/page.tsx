@@ -24,6 +24,9 @@ export default async function SiteDetailPage(props: PageProps<"/sites/[id]">) {
   // Missing and hidden-by-RLS look the same: 0 rows, same 404.
   if (!site) notFound();
 
+  // UTC calendar day, the reference for the period filter.
+  const today = new Date().toISOString().slice(0, 10);
+
   // A Site Manager only reaches their own site here; their home is /my-site.
   const back = me.role === "site_manager"
     ? { href: "/my-site", label: "← My site" }
@@ -47,7 +50,7 @@ export default async function SiteDetailPage(props: PageProps<"/sites/[id]">) {
           }
         />
 
-        <SiteDashboard siteId={site.id} siteName={site.name} data={data} />
+        <SiteDashboard siteId={site.id} siteName={site.name} data={data} today={today} />
       </main>
     </div>
   );

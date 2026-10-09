@@ -43,7 +43,13 @@ function toTime(date: string) {
 }
 
 // Small multiples: one chart per energy type, each with its own y-axis and unit.
-export default function ConsumptionChart({ readings }: { readings: ChartReading[] }) {
+export default function ConsumptionChart({
+  readings,
+  emptyLabel = "No readings yet",
+}: {
+  readings: ChartReading[];
+  emptyLabel?: string;
+}) {
   const points = readings.map((r) => ({ ...r, time: toTime(r.date), value: Number(r.value) }));
 
   // Shared time domain so the four charts line up; padded by a day for single points.
@@ -60,6 +66,7 @@ export default function ConsumptionChart({ readings }: { readings: ChartReading[
           type={type}
           data={points.filter((p) => p.energy_type === type).sort((a, b) => a.time - b.time)}
           domain={domain}
+          emptyLabel={emptyLabel}
         />
       ))}
     </div>
@@ -70,10 +77,12 @@ function EnergyPanel({
   type,
   data,
   domain,
+  emptyLabel,
 }: {
   type: EnergyType;
   data: { time: number; value: number }[];
   domain: [number, number];
+  emptyLabel: string;
 }) {
   const unit = ENERGY_UNITS[type];
   const color = ENERGY_COLORS[type];
@@ -87,7 +96,7 @@ function EnergyPanel({
       </figcaption>
 
       {data.length === 0 ? (
-        <EmptyState className="h-40">No readings yet</EmptyState>
+        <EmptyState className="h-40">{emptyLabel}</EmptyState>
       ) : (
         <div className="h-40">
           <ResponsiveContainer width="100%" height="100%">

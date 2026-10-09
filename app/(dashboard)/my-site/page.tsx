@@ -37,6 +37,7 @@ export default async function MySitePage() {
           siteId={me.site_id}
           siteName={site?.name ?? "My site"}
           data={data}
+          today={today}
           readingForm={<ReadingForm today={today} />}
           readingsEditing={{ today }}
         />

@@ -42,6 +42,12 @@ export const LABEL = "text-sm font-medium text-muted";
 
 export const LINK = `rounded font-medium text-brand underline-offset-4 hover:underline ${FOCUS}`;
 
+// Filter pills (toggle buttons): 44 px high, visible focus, pressed state via aria-pressed.
+export const PILL =
+  `inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-medium transition-colors ${FOCUS}`;
+export const PILL_ON = "border-brand bg-brand text-white hover:bg-brand-hover";
+export const PILL_OFF = "border-line-strong/60 bg-surface text-muted hover:border-line-strong hover:text-ink";
+
 // Status badges
 export const BADGE = "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium";
 export const BADGE_BRAND = `${BADGE} bg-brand-soft text-brand-ink`;
