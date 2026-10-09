@@ -2,17 +2,20 @@ import Image from "next/image";
 
 // EnerTrack logo: the app icon (public/enertrack-logo.svg) + wordmark.
 // "header": 32 px icon, white wordmark for the brand header.
-// "full": larger icon, two-tone wordmark ("Ener" ink, "Track" teal) for login / sign-up.
+// "full": public/enertrack-logo-full.svg (icon + two-tone wordmark) for login / sign-up.
 export default function Logo({ variant = "header" }: { variant?: "header" | "full" }) {
   if (variant === "full") {
+    // public/enertrack-logo-full.svg (270x64). Its wordmark is SVG <text>: inside <img> it
+    // uses the visitor's installed fonts (Inter, else Helvetica Neue / Arial).
     return (
-      <span className="inline-flex items-center gap-3">
-        <Image src="/enertrack-logo.svg" alt="" width={48} height={48} priority />
-        <span className="text-3xl font-bold tracking-tight">
-          <span className="text-ink">Ener</span>
-          <span className="text-energy-electricity">Track</span>
-        </span>
-      </span>
+      <Image
+        src="/enertrack-logo-full.svg"
+        alt="EnerTrack"
+        width={270}
+        height={64}
+        priority
+        className="h-12 w-auto"
+      />
     );
   }
 
