@@ -4,7 +4,14 @@ import { useMemo, useState, type ReactNode } from "react";
 import ConsumptionChart from "@/components/ConsumptionChart";
 import ReadingsTable, { type Reading, type ReadingsEditing } from "@/components/ReadingsTable";
 import { ENERGY_COLORS } from "@/components/energyColors";
-import { PERIODS, inPeriod, periodRange, type Period } from "@/components/readingFilters";
+import {
+  PERIODS,
+  customRange,
+  inPeriod,
+  periodRange,
+  type CustomRange,
+  type Period,
+} from "@/components/readingFilters";
 import SelectionSummary from "@/components/SelectionSummary";
 import { TYPE_LABELS } from "@/components/selectionStats";
 import { ErrorMessage } from "@/components/ui/Feedback";
@@ -13,6 +20,8 @@ import {
   CARD,
   CARD_BODY,
   EYEBROW,
+  FIELD,
+  LABEL,
   PILL,
   PILL_OFF,
   PILL_ON,
@@ -49,6 +58,27 @@ export default function ReadingsExplorer({
   readingsEditing?: ReadingsEditing;
 }) {
   const [period, setPeriod] = useState<Period>("all");
+
+  // Custom period: first and last reading dates bound the date pickers.
+  const dataMin = useMemo(() => readings.reduce((m, r) => (r.date < m ? r.date : m), readings[0]?.date ?? ""), [readings]);
+  const dataMax = useMemo(() => readings.reduce((m, r) => (r.date > m ? r.date : m), readings[0]?.date ?? ""), [readings]);
+  // What the user is typing, and the last valid range (the one actually applied).
+  const [draft, setDraft] = useState<CustomRange>({ from: dataMin, to: dataMax });
+  const [applied, setApplied] = useState<CustomRange>({ from: dataMin, to: dataMax });
+  const [customError, setCustomError] = useState<string | null>(null);
+
+  function updateDraft(next: CustomRange) {
+    setDraft(next);
+    const check = customRange(next.from, next.to);
+    if (check.ok) {
+      setApplied(next);
+      setCustomError(null);
+    } else {
+      // Invalid: say why and keep filtering with the previous valid range.
+      setCustomError(check.error);
+    }
+  }
+
   // Kept in ENERGY_TYPES order; never empty.
   const [types, setTypes] = useState<EnergyType[]>([...ENERGY_TYPES]);
 
@@ -64,11 +94,12 @@ export default function ReadingsExplorer({
   }
 
   const filtered = useMemo(() => {
-    const range = periodRange(period, today);
+    const custom = customRange(applied.from, applied.to);
+    const range = period === "custom" ? (custom.ok ? custom.range : {}) : periodRange(period, today);
     return readings.filter(
       (r) => inPeriod(r.date, range) && (types as string[]).includes(r.energy_type)
     );
-  }, [readings, period, today, types]);
+  }, [readings, period, today, types, applied]);
 
   const isFiltered = period !== "all" || !allTypes;
   const resetFilters = () => {
@@ -107,6 +138,8 @@ export default function ReadingsExplorer({
                   key={p.id}
                   type="button"
                   aria-pressed={period === p.id}
+                  aria-controls={p.id === "custom" ? "custom-period" : undefined}
+                  aria-expanded={p.id === "custom" ? period === "custom" : undefined}
                   onClick={() => setPeriod(p.id)}
                   className={`${PILL} ${period === p.id ? PILL_ON : PILL_OFF}`}
                 >
@@ -115,6 +148,42 @@ export default function ReadingsExplorer({
               ))}
             </div>
           </div>
+
+          {period === "custom" && (
+            <div id="custom-period" className="flex flex-col gap-2 sm:pl-20">
+              <div className="grid gap-3 sm:grid-cols-2 sm:max-w-md">
+                <label className="flex flex-col gap-1.5">
+                  <span className={LABEL}>From</span>
+                  <input
+                    type="date"
+                    min={dataMin}
+                    max={dataMax}
+                    value={draft.from}
+                    onChange={(e) => updateDraft({ ...draft, from: e.target.value })}
+                    aria-invalid={customError ? true : undefined}
+                    aria-describedby="custom-period-error"
+                    className={`${FIELD} w-full aria-invalid:border-danger aria-invalid:ring-2 aria-invalid:ring-danger/20`}
+                  />
+                </label>
+                <label className="flex flex-col gap-1.5">
+                  <span className={LABEL}>To</span>
+                  <input
+                    type="date"
+                    min={dataMin}
+                    max={dataMax}
+                    value={draft.to}
+                    onChange={(e) => updateDraft({ ...draft, to: e.target.value })}
+                    aria-invalid={customError ? true : undefined}
+                    aria-describedby="custom-period-error"
+                    className={`${FIELD} w-full aria-invalid:border-danger aria-invalid:ring-2 aria-invalid:ring-danger/20`}
+                  />
+                </label>
+              </div>
+              <p id="custom-period-error" aria-live="polite" className="text-sm text-danger empty:hidden">
+                {customError ? `${customError} The previous range is still applied.` : ""}
+              </p>
+            </div>
+          )}
 
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <span className={`${EYEBROW} w-16 shrink-0`} id="type-label">
@@ -161,7 +230,13 @@ export default function ReadingsExplorer({
       )}
 
       {!readingsError && readings.length > 0 && (
-        <SelectionSummary readings={filtered} types={types} period={period} today={today} />
+        <SelectionSummary
+          readings={filtered}
+          types={types}
+          period={period}
+          today={today}
+          custom={period === "custom" ? applied : null}
+        />
       )}
 
       <div className={`grid gap-6 ${readingForm ? "md:grid-cols-[1fr_2fr]" : ""}`}>

@@ -1,5 +1,5 @@
 import { ENERGY_COLORS } from "@/components/energyColors";
-import type { Period } from "@/components/readingFilters";
+import type { CustomRange, Period } from "@/components/readingFilters";
 import {
   TYPE_LABELS,
   describeSelection,
@@ -29,11 +29,13 @@ export default function SelectionSummary({
   types,
   period,
   today,
+  custom,
 }: {
   readings: SelectionReading[];
   types: readonly EnergyType[];
   period: Period;
   today: string;
+  custom?: CustomRange | null; // applied custom range, when period is "custom"
 }) {
   const summaries = summarizeSelection(readings, types);
 
@@ -43,7 +45,7 @@ export default function SelectionSummary({
         Selection summary
       </h2>
       <p className="text-sm text-muted" aria-live="polite">
-        <span className="font-medium text-ink">Showing</span> {describeSelection(period, types, today)}
+        <span className="font-medium text-ink">Showing</span> {describeSelection(period, types, today, custom)}
       </p>
 
       <div className={GRID[summaries.length] ?? GRID[4]}>

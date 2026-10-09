@@ -10,7 +10,8 @@
     "test:security": "tsx --env-file=.env.local scripts/security-test.ts",
     "test:totals": "tsx scripts/monthly-totals-test.ts",
     "test:selection": "tsx scripts/selection-summary-test.ts",
-    "test:budget": "tsx scripts/budget-status-test.ts"
+    "test:budget": "tsx scripts/budget-status-test.ts",
+    "test:filters": "tsx scripts/reading-filters-test.ts"
   },
   "dependencies": {
     "@google/genai": "^2.27.0",

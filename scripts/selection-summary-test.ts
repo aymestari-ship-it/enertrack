@@ -108,6 +108,8 @@ function show(s: TypeSummary | undefined) {
     [["3-months", ["electricity", "gas"], "2026-10-09"], "3 months (August – October 2026) · Electricity and Gas"],
     [["3-months", ["gas", "fuel", "water"], "2026-01-15"], "3 months (November 2025 – January 2026) · Gas, Fuel and Water"],
     [["all", ["water"], "2026-10-09"], "All readings · Water"],
+    [["custom", ["electricity"], "2026-10-09", { from: "2026-09-15", to: "2026-10-02" }], "Custom (Sep 15, 2026 – Oct 2, 2026) · Electricity"],
+    [["custom", ["electricity", "gas", "fuel", "water"], "2026-10-09", { from: "2026-10-01", to: "2026-10-01" }], "Custom (Oct 1, 2026) · all energy types"],
   ];
   const results = cases.map(([args, expected]) => ({ got: describeSelection(...args), expected }));
   check(

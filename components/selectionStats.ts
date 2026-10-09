@@ -1,8 +1,8 @@
 // Pure summary of the readings currently shown (already filtered by period and type).
 // One result per energy type, in its own unit: different types are never added together.
-import { periodRange, PERIODS, type Period } from "@/components/readingFilters";
+import { periodRange, PERIODS, type CustomRange, type Period } from "@/components/readingFilters";
 import { ENERGY_UNITS, type EnergyType } from "@/lib/energy";
-import { formatMonthUtc } from "@/lib/format";
+import { formatDay, formatMonthUtc } from "@/lib/format";
 
 export type SelectionReading = { energy_type: string; value: number; date: string };
 
@@ -67,11 +67,28 @@ function listOf(words: string[]) {
   return `${words.slice(0, -1).join(", ")} and ${words[words.length - 1]}`;
 }
 
+function dayLabel(date: string) {
+  const [y, m, d] = date.split("-").map(Number);
+  return formatDay(Date.UTC(y, m - 1, d), true);
+}
+
 // "This month (October 2026) · Electricity and Gas"
-export function describeSelection(period: Period, types: readonly EnergyType[], today: string) {
+// "Custom (Sep 15, 2026 – Oct 2, 2026) · all energy types"
+export function describeSelection(
+  period: Period,
+  types: readonly EnergyType[],
+  today: string,
+  custom?: CustomRange | null
+) {
   const range = periodRange(period, today);
   let when: string;
-  if (period === "all") {
+  if (period === "custom") {
+    when = !custom
+      ? "Custom"
+      : custom.from === custom.to
+        ? `Custom (${dayLabel(custom.from)})`
+        : `Custom (${dayLabel(custom.from)} – ${dayLabel(custom.to)})`;
+  } else if (period === "all") {
     when = "All readings";
   } else {
     const label = PERIODS.find((p) => p.id === period)?.label ?? "";
