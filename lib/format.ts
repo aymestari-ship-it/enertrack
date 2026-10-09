@@ -29,3 +29,15 @@ export function formatTimestampUtc(iso: string) {
   if (Number.isNaN(d.getTime())) return iso;
   return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())} UTC`;
 }
+
+const MONTHS_LONG = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
+// ISO timestamp -> "October 2026" (UTC).
+export function formatMonthUtc(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return `${MONTHS_LONG[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+}

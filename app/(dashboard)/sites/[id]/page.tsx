@@ -47,7 +47,7 @@ export default async function SiteDetailPage(props: PageProps<"/sites/[id]">) {
           }
         />
 
-        <SiteDashboard siteId={site.id} data={data} />
+        <SiteDashboard siteId={site.id} siteName={site.name} data={data} />
       </main>
     </div>
   );

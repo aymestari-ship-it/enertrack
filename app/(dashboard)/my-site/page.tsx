@@ -35,6 +35,7 @@ export default async function MySitePage() {
 
         <SiteDashboard
           siteId={me.site_id}
+          siteName={site?.name ?? "My site"}
           data={data}
           readingForm={<ReadingForm today={today} />}
           readingsEditing={{ today }}

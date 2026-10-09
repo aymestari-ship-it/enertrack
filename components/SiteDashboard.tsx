@@ -12,11 +12,13 @@ const TITLE = `mb-4 ${SECTION_TITLE}`;
 // Shared by /my-site (reading form + Edit/Delete) and /sites/[id] (read-only).
 export default function SiteDashboard({
   siteId,
+  siteName,
   data,
   readingForm,
   readingsEditing,
 }: {
   siteId: string;
+  siteName: string;
   data: Omit<SiteDashboardData, "site">;
   readingForm?: ReactNode;
   readingsEditing?: ReadingsEditing;
@@ -37,7 +39,7 @@ export default function SiteDashboard({
 
       <section className={`${SECTION} ${fullWidth}`}>
         <h2 className={TITLE}>AI summary</h2>
-        <AiSummaryPanel siteId={siteId} summaries={data.summaries} />
+        <AiSummaryPanel siteId={siteId} siteName={siteName} summaries={data.summaries} />
       </section>
 
       <section className={`${SECTION} ${fullWidth}`}>
