@@ -1,22 +1,25 @@
-// EnerTrack mark (decorative) + wordmark. `onDark` for the brand header.
-export default function Logo({ onDark = false, size = "md" }: { onDark?: boolean; size?: "md" | "lg" }) {
-  const box = size === "lg" ? "size-10" : "size-8";
-  const text = size === "lg" ? "text-2xl" : "text-lg";
+import Image from "next/image";
+
+// EnerTrack logo: the app icon (public/enertrack-logo.svg) + wordmark.
+// "header": 32 px icon, white wordmark for the brand header.
+// "full": larger icon, two-tone wordmark ("Ener" ink, "Track" teal) for login / sign-up.
+export default function Logo({ variant = "header" }: { variant?: "header" | "full" }) {
+  if (variant === "full") {
+    return (
+      <span className="inline-flex items-center gap-3">
+        <Image src="/enertrack-logo.svg" alt="" width={48} height={48} priority />
+        <span className="text-3xl font-bold tracking-tight">
+          <span className="text-ink">Ener</span>
+          <span className="text-energy-electricity">Track</span>
+        </span>
+      </span>
+    );
+  }
+
   return (
     <span className="inline-flex items-center gap-2.5">
-      <span
-        className={`${box} inline-flex shrink-0 items-center justify-center rounded-lg ${
-          onDark ? "bg-white/15 text-white" : "bg-brand text-white"
-        }`}
-        aria-hidden="true"
-      >
-        <svg viewBox="0 0 24 24" className="size-5" fill="currentColor">
-          <path d="M13.5 2 5 13.5h5.5L9.5 22 19 9.5h-5.6L13.5 2Z" />
-        </svg>
-      </span>
-      <span className={`${text} font-semibold tracking-tight ${onDark ? "text-white" : "text-ink"}`}>
-        EnerTrack
-      </span>
+      <Image src="/enertrack-logo.svg" alt="" width={32} height={32} priority />
+      <span className="text-lg font-semibold tracking-tight text-white">EnerTrack</span>
     </span>
   );
 }

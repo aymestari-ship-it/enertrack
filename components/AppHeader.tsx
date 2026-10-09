@@ -1,3 +1,4 @@
+import Link from "next/link";
 import HeaderNav from "@/components/HeaderNav";
 import LogoutButton from "@/components/LogoutButton";
 import Logo from "@/components/ui/Logo";
@@ -32,7 +33,14 @@ export default function AppHeader({
   return (
     <header className="bg-brand-dark text-white shadow-sm">
       <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 sm:px-6">
-        <Logo onDark />
+        {/* "/" sends each role to its home page (proxy.ts). */}
+        <Link
+          href="/"
+          aria-label="EnerTrack home"
+          className="inline-flex min-h-11 items-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        >
+          <Logo />
+        </Link>
 
         {links.length > 0 && (
           <div className="order-last w-full sm:order-none sm:w-auto">
