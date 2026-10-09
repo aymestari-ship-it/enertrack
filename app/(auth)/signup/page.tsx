@@ -77,7 +77,6 @@ export default function SignupPage() {
             <span className={LABEL}>Full name</span>
             <input
               type="text"
-              placeholder="Full name"
               autoComplete="name"
               required
               value={fullName}
@@ -89,7 +88,6 @@ export default function SignupPage() {
             <span className={LABEL}>Email</span>
             <input
               type="email"
-              placeholder="Email"
               autoComplete="email"
               required
               value={email}
@@ -101,7 +99,6 @@ export default function SignupPage() {
             <span className={LABEL}>Password</span>
             <input
               type="password"
-              placeholder="Password"
               autoComplete="new-password"
               required
               minLength={6}
@@ -121,7 +118,7 @@ export default function SignupPage() {
 
         <p className="mt-6 text-center text-sm text-muted">
           Already have an account?{" "}
-          <Link href="/login" className={LINK}>
+          <Link href="/login" className={`${LINK} inline-flex min-h-11 items-center`}>
             Log in
           </Link>
         </p>

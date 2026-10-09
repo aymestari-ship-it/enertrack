@@ -50,11 +50,11 @@ export default function SiteForm({
       <div className="grid gap-3 sm:grid-cols-3">
         <label className="flex flex-col gap-1.5">
           <span className={LABEL}>Name</span>
-          <input required placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} className={`${FIELD} w-full`} />
+          <input required value={name} onChange={(e) => setName(e.target.value)} className={`${FIELD} w-full`} />
         </label>
         <label className="flex flex-col gap-1.5">
           <span className={LABEL}>Location</span>
-          <input placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)} className={`${FIELD} w-full`} />
+          <input value={location} onChange={(e) => setLocation(e.target.value)} className={`${FIELD} w-full`} />
         </label>
         <label className="flex flex-col gap-1.5">
           <span className={LABEL}>Monthly budget (kWh)</span>
@@ -64,7 +64,6 @@ export default function SiteForm({
               inputMode="decimal"
               step="any"
               min={0}
-              placeholder="Monthly budget"
               value={budget}
               onChange={(e) => setBudget(e.target.value)}
               className={`${FIELD} w-full`}

@@ -58,7 +58,6 @@ export default function ReadingForm({ today }: { today: string }) {
             step="any"
             min={0}
             required
-            placeholder="Value"
             value={value}
             onChange={(e) => setValue(e.target.value)}
             className={`${FIELD} w-full`}

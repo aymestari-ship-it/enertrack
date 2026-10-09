@@ -45,7 +45,6 @@ export default function LoginPage() {
             <span className={LABEL}>Email</span>
             <input
               type="email"
-              placeholder="Email"
               autoComplete="email"
               required
               value={email}
@@ -57,7 +56,6 @@ export default function LoginPage() {
             <span className={LABEL}>Password</span>
             <input
               type="password"
-              placeholder="Password"
               autoComplete="current-password"
               required
               value={password}
@@ -76,7 +74,7 @@ export default function LoginPage() {
 
         <p className="mt-6 text-center text-sm text-muted">
           No account?{" "}
-          <Link href="/signup" className={LINK}>
+          <Link href="/signup" className={`${LINK} inline-flex min-h-11 items-center`}>
             Sign up
           </Link>
         </p>

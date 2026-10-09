@@ -20,14 +20,14 @@ const BUTTON =
 export const BUTTON_PRIMARY = `${BUTTON} bg-brand text-white hover:bg-brand-hover`;
 export const BUTTON_SECONDARY = `${BUTTON} border border-line-strong bg-surface text-ink hover:bg-panel`;
 export const BUTTON_DANGER = `${BUTTON} border border-danger/40 bg-surface text-danger hover:bg-danger-soft`;
-// Inside table rows: still 44 px on mobile, 32 px from 640 px up.
-export const BUTTON_COMPACT = "sm:min-h-8 sm:px-3";
+// Inside table rows: 44 px on phones and tablets, 32 px from 1024 px up.
+export const BUTTON_COMPACT = "lg:min-h-8 lg:px-3";
 
 // Fields: 16 px text (no iOS zoom on focus) and 44 px high.
 export const FIELD =
   "min-h-11 rounded-lg border border-line-strong bg-surface px-3 text-base text-ink placeholder:text-subtle focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/25 disabled:bg-panel disabled:text-subtle";
-// Inside table rows: same as FIELD on mobile, smaller from 640 px up.
-export const FIELD_COMPACT = "sm:min-h-8 sm:px-2 sm:text-sm";
+// Inside table rows: same as FIELD on phones and tablets, smaller from 1024 px up.
+export const FIELD_COMPACT = "lg:min-h-8 lg:px-2 lg:text-sm";
 export const LABEL = "text-sm font-medium text-ink";
 
 export const LINK = `rounded font-medium text-brand underline-offset-4 hover:underline ${FOCUS}`;
