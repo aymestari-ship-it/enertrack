@@ -3,6 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ErrorMessage, Spinner } from "@/components/ui/Feedback";
+import Logo from "@/components/ui/Logo";
+import { BUTTON_PRIMARY, CARD, FIELD, LABEL, LINK } from "@/components/ui/styles";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
@@ -32,46 +35,52 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex flex-1 items-center justify-center bg-surface px-4 text-ink">
-      <form onSubmit={handleSubmit} className="flex w-full max-w-xs flex-col gap-3">
-        <h1 className="mb-4 text-center text-2xl font-bold text-brand">EnerTrack</h1>
+    <main className="flex flex-1 items-center justify-center bg-canvas px-4 py-10">
+      <div className="w-full max-w-sm">
+        <div className="mb-6 flex justify-center">
+          <Logo size="lg" />
+        </div>
+        <form onSubmit={handleSubmit} className={`${CARD} flex flex-col gap-4 p-6 sm:p-8`}>
+          <label className="flex flex-col gap-1.5">
+            <span className={LABEL}>Email</span>
+            <input
+              type="email"
+              placeholder="Email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={`${FIELD} w-full`}
+            />
+          </label>
+          <label className="flex flex-col gap-1.5">
+            <span className={LABEL}>Password</span>
+            <input
+              type="password"
+              placeholder="Password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`${FIELD} w-full`}
+            />
+          </label>
 
-        <input
-          type="email"
-          placeholder="Email"
-          autoComplete="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="rounded border border-line-strong bg-panel px-3 py-2"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          autoComplete="current-password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="rounded border border-line-strong bg-panel px-3 py-2"
-        />
+          {error && <ErrorMessage>{error}</ErrorMessage>}
 
-        {error && <p className="text-sm text-danger">{error}</p>}
+          <button type="submit" disabled={loading} className={`${BUTTON_PRIMARY} mt-1 w-full`}>
+            {loading && <Spinner />}
+            {loading ? "Logging in…" : "Log in"}
+          </button>
+        </form>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="mt-2 rounded bg-brand py-2 font-semibold text-white hover:bg-brand-hover disabled:opacity-60"
-        >
-          {loading ? "Logging in…" : "Log in"}
-        </button>
-
-        <p className="text-center text-sm">
+        <p className="mt-6 text-center text-sm text-muted">
           No account?{" "}
-          <Link href="/signup" className="text-brand underline">
+          <Link href="/signup" className={LINK}>
             Sign up
           </Link>
         </p>
-      </form>
+      </div>
     </main>
   );
 }

@@ -1,3 +1,4 @@
+import AppHeader from "@/components/AppHeader";
 import LogoutButton from "@/components/LogoutButton";
 import { CARD, PAGE } from "@/components/ui/styles";
 
@@ -5,10 +6,7 @@ import { CARD, PAGE } from "@/components/ui/styles";
 export default function PendingPage() {
   return (
     <div className={PAGE}>
-      <header className="flex items-center justify-between bg-brand-dark px-6 py-3 text-white">
-        <span className="font-bold">EnerTrack</span>
-        <span className="text-sm">Site Manager · Pending</span>
-      </header>
+      <AppHeader role="Site Manager" page="Pending" showLogout={false} />
 
       <main className="flex flex-1 items-center justify-center px-4">
         <div className={`${CARD} w-full max-w-md p-8 text-center`}>

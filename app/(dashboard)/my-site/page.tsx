@@ -21,7 +21,7 @@ export default async function MySitePage() {
 
   return (
     <div className={PAGE}>
-      <AppHeader subtitle="Site Manager · My Site" />
+      <AppHeader role="Site Manager" page="My Site" />
 
       <main className={`${MAIN} max-w-5xl`}>
         <div className="mb-6">

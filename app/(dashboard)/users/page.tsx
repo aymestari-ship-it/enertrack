@@ -20,8 +20,9 @@ export default async function UsersPage() {
   return (
     <div className={PAGE}>
       <AppHeader
-        subtitle="Direction · User & Role Management"
-links={navLinksFor(me.role)}
+        role="Direction"
+        page="User & Role Management"
+        links={navLinksFor(me.role)}
       />
 
       <main className={`${MAIN} max-w-4xl`}>

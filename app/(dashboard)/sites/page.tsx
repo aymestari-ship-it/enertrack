@@ -39,7 +39,8 @@ export default async function SitesPage() {
   return (
     <div className={PAGE}>
       <AppHeader
-        subtitle={`${ROLE_LABELS[me.role]} · Sites`}
+        role={ROLE_LABELS[me.role]}
+        page="Sites"
         links={navLinksFor(me.role)}
       />
 

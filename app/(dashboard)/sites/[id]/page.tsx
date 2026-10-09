@@ -30,7 +30,7 @@ export default async function SiteDetailPage(props: PageProps<"/sites/[id]">) {
 
   return (
     <div className={PAGE}>
-      <AppHeader subtitle={`${ROLE_LABELS[me.role]} · Site Detail`} links={navLinksFor(me.role)} />
+      <AppHeader role={ROLE_LABELS[me.role]} page="Site Detail" links={navLinksFor(me.role)} />
 
       <main className={`${MAIN} max-w-5xl`}>
         <Link href={back.href} className={`${LINK} inline-flex min-h-11 items-center text-sm`}>

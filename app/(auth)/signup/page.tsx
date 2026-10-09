@@ -3,6 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ErrorMessage, Spinner } from "@/components/ui/Feedback";
+import Logo from "@/components/ui/Logo";
+import { BUTTON_PRIMARY, CARD, FIELD, LABEL, LINK } from "@/components/ui/styles";
 import { createClient } from "@/lib/supabase/client";
 
 export default function SignupPage() {
@@ -47,69 +50,82 @@ export default function SignupPage() {
 
   if (checkEmail) {
     return (
-      <main className="flex flex-1 items-center justify-center bg-surface px-4 text-ink">
-        <div className="w-full max-w-xs text-center">
-          <h1 className="mb-4 text-2xl font-bold text-brand">EnerTrack</h1>
-          <p>Check your email to confirm your account, then log in.</p>
-          <Link href="/login" className="mt-4 inline-block text-sm text-brand underline">
-            Back to log in
-          </Link>
+    <main className="flex flex-1 items-center justify-center bg-canvas px-4 py-10">
+      <div className="w-full max-w-sm">
+        <div className="mb-6 flex justify-center">
+          <Logo size="lg" />
+        </div>
+          <div className={`${CARD} p-6 text-center sm:p-8`}>
+            <p className="text-ink">Check your email to confirm your account, then log in.</p>
+            <Link href="/login" className={`${LINK} mt-4 inline-flex min-h-11 items-center text-sm`}>
+              Back to log in
+            </Link>
+          </div>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="flex flex-1 items-center justify-center bg-surface px-4 text-ink">
-      <form onSubmit={handleSubmit} className="flex w-full max-w-xs flex-col gap-3">
-        <h1 className="mb-4 text-center text-2xl font-bold text-brand">EnerTrack</h1>
+    <main className="flex flex-1 items-center justify-center bg-canvas px-4 py-10">
+      <div className="w-full max-w-sm">
+        <div className="mb-6 flex justify-center">
+          <Logo size="lg" />
+        </div>
+        <form onSubmit={handleSubmit} className={`${CARD} flex flex-col gap-4 p-6 sm:p-8`}>
+          <label className="flex flex-col gap-1.5">
+            <span className={LABEL}>Full name</span>
+            <input
+              type="text"
+              placeholder="Full name"
+              autoComplete="name"
+              required
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className={`${FIELD} w-full`}
+            />
+          </label>
+          <label className="flex flex-col gap-1.5">
+            <span className={LABEL}>Email</span>
+            <input
+              type="email"
+              placeholder="Email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={`${FIELD} w-full`}
+            />
+          </label>
+          <label className="flex flex-col gap-1.5">
+            <span className={LABEL}>Password</span>
+            <input
+              type="password"
+              placeholder="Password"
+              autoComplete="new-password"
+              required
+              minLength={6}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`${FIELD} w-full`}
+            />
+          </label>
 
-        <input
-          type="text"
-          placeholder="Full name"
-          autoComplete="name"
-          required
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          className="rounded border border-line-strong bg-panel px-3 py-2"
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          autoComplete="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="rounded border border-line-strong bg-panel px-3 py-2"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          autoComplete="new-password"
-          required
-          minLength={6}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="rounded border border-line-strong bg-panel px-3 py-2"
-        />
+          {error && <ErrorMessage>{error}</ErrorMessage>}
 
-        {error && <p className="text-sm text-danger">{error}</p>}
+          <button type="submit" disabled={loading} className={`${BUTTON_PRIMARY} mt-1 w-full`}>
+            {loading && <Spinner />}
+            {loading ? "Signing up…" : "Sign up"}
+          </button>
+        </form>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="mt-2 rounded bg-brand py-2 font-semibold text-white hover:bg-brand-hover disabled:opacity-60"
-        >
-          {loading ? "Signing up…" : "Sign up"}
-        </button>
-
-        <p className="text-center text-sm">
+        <p className="mt-6 text-center text-sm text-muted">
           Already have an account?{" "}
-          <Link href="/login" className="text-brand underline">
+          <Link href="/login" className={LINK}>
             Log in
           </Link>
         </p>
-      </form>
+      </div>
     </main>
   );
 }
