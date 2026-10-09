@@ -2,6 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { addReading } from "@/app/(dashboard)/my-site/actions";
+import { ErrorMessage, Spinner, SuccessMessage } from "@/components/ui/Feedback";
+import { BUTTON_PRIMARY, FIELD, LABEL, SECTION_TITLE } from "@/components/ui/styles";
 import { ENERGY_TYPES, ENERGY_UNITS, type EnergyType } from "@/lib/energy";
 
 export default function ReadingForm({ today }: { today: string }) {
@@ -29,53 +31,59 @@ export default function ReadingForm({ today }: { today: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-      <h2 className="font-bold">New reading</h2>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <h2 className={SECTION_TITLE}>New reading</h2>
 
-      <select
-        value={energyType}
-        onChange={(e) => setEnergyType(e.target.value as EnergyType)}
-        className="rounded border border-line-strong bg-surface px-3 py-2"
-      >
-        {ENERGY_TYPES.map((type) => (
-          <option key={type} value={type}>
-            {type.charAt(0).toUpperCase() + type.slice(1)} ({ENERGY_UNITS[type]})
-          </option>
-        ))}
-      </select>
+      <label className="flex flex-col gap-1.5">
+        <span className={LABEL}>Energy type</span>
+        <select
+          value={energyType}
+          onChange={(e) => setEnergyType(e.target.value as EnergyType)}
+          className={`${FIELD} w-full`}
+        >
+          {ENERGY_TYPES.map((type) => (
+            <option key={type} value={type}>
+              {type.charAt(0).toUpperCase() + type.slice(1)} ({ENERGY_UNITS[type]})
+            </option>
+          ))}
+        </select>
+      </label>
 
-      <div className="flex items-center gap-2">
+      <label className="flex flex-col gap-1.5">
+        <span className={LABEL}>Value</span>
+        <span className="flex items-center gap-2">
+          <input
+            type="number"
+            inputMode="decimal"
+            step="any"
+            min={0}
+            required
+            placeholder="Value"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            className={`${FIELD} w-full`}
+          />
+          <span className="w-10 text-sm text-muted">{ENERGY_UNITS[energyType]}</span>
+        </span>
+      </label>
+
+      <label className="flex flex-col gap-1.5">
+        <span className={LABEL}>Date</span>
         <input
-          type="number"
-          inputMode="decimal"
-          step="any"
-          min={0}
+          type="date"
           required
-          placeholder="Value"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          className="w-full rounded border border-line-strong bg-surface px-3 py-2"
+          max={today}
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className={`${FIELD} w-full`}
         />
-        <span className="w-10 text-sm">{ENERGY_UNITS[energyType]}</span>
-      </div>
+      </label>
 
-      <input
-        type="date"
-        required
-        max={today}
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
-        className="rounded border border-line-strong bg-surface px-3 py-2"
-      />
+      {error && <ErrorMessage>{error}</ErrorMessage>}
+      {saved && <SuccessMessage>Reading saved.</SuccessMessage>}
 
-      {error && <p className="text-sm text-danger">{error}</p>}
-      {saved && <p className="text-sm text-brand">Reading saved.</p>}
-
-      <button
-        type="submit"
-        disabled={pending}
-        className="self-start rounded bg-brand px-6 py-2 font-semibold text-white hover:bg-brand-hover disabled:opacity-60"
-      >
+      <button type="submit" disabled={pending} className={`${BUTTON_PRIMARY} self-start`}>
+        {pending && <Spinner />}
         {pending ? "Saving…" : "Submit"}
       </button>
     </form>

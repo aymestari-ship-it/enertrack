@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import { ENERGY_TYPES, ENERGY_UNITS, type EnergyType } from "@/lib/energy";
 import { formatDay, formatNumber } from "@/lib/format";
+import { EmptyState } from "@/components/ui/Feedback";
 
 type ChartReading = {
   energy_type: string;
@@ -72,15 +73,13 @@ function EnergyPanel({
   const title = type.charAt(0).toUpperCase() + type.slice(1);
 
   return (
-    <figure className="rounded border border-line bg-surface p-3">
-      <figcaption className="mb-2 text-sm font-semibold">
+    <figure className="rounded-lg border border-line bg-surface p-3">
+      <figcaption className="mb-2 text-sm font-semibold text-ink">
         {title} <span className="font-normal text-subtle">({unit})</span>
       </figcaption>
 
       {data.length === 0 ? (
-        <p className="flex h-40 items-center justify-center text-sm text-subtle">
-          No readings yet
-        </p>
+        <EmptyState className="h-40">No readings yet</EmptyState>
       ) : (
         <div className="h-40">
           <ResponsiveContainer width="100%" height="100%">

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createSite } from "@/app/(dashboard)/sites/actions";
 import SiteForm from "@/components/SiteForm";
+import { BUTTON_PRIMARY } from "@/components/ui/styles";
 
 export default function NewSiteForm() {
   const [open, setOpen] = useState(false);
@@ -12,7 +13,7 @@ export default function NewSiteForm() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="rounded bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-hover"
+        className={BUTTON_PRIMARY}
       >
         + New site
       </button>

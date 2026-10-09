@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import AppHeader, { navLinksFor } from "@/components/AppHeader";
 import SiteDashboard from "@/components/SiteDashboard";
+import { BADGE_NEUTRAL, LINK, MAIN, PAGE, PAGE_TITLE } from "@/components/ui/styles";
 import { getCurrentProfile } from "@/lib/auth";
 import { ROLE_LABELS } from "@/lib/roles";
 import { getSiteDashboardData } from "@/lib/siteDashboard";
@@ -28,25 +29,21 @@ export default async function SiteDetailPage(props: PageProps<"/sites/[id]">) {
     : { href: "/sites", label: "← All sites" };
 
   return (
-    <div className="flex flex-1 flex-col bg-canvas text-ink">
+    <div className={PAGE}>
       <AppHeader subtitle={`${ROLE_LABELS[me.role]} · Site Detail`} links={navLinksFor(me.role)} />
 
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
-        <Link href={back.href} className="text-sm text-brand hover:underline">
+      <main className={`${MAIN} max-w-5xl`}>
+        <Link href={back.href} className={`${LINK} inline-flex min-h-11 items-center text-sm`}>
           {back.label}
         </Link>
 
-        <h1 className="mb-6 mt-2 text-xl font-bold">
-          {site.name}
-          {site.location && (
-            <span className="ml-2 text-base font-normal text-muted">{site.location}</span>
-          )}
-          {site.status === "archived" && (
-            <span className="ml-2 rounded bg-line px-2 py-0.5 align-middle text-xs font-normal text-muted">
-              Archived
-            </span>
-          )}
-        </h1>
+        <div className="mb-6 mt-1">
+          <h1 className={`${PAGE_TITLE} flex flex-wrap items-center gap-2`}>
+            {site.name}
+            {site.status === "archived" && <span className={BADGE_NEUTRAL}>Archived</span>}
+          </h1>
+          {site.location && <p className="mt-1 text-sm text-subtle">{site.location}</p>}
+        </div>
 
         <SiteDashboard siteId={site.id} data={data} />
       </main>

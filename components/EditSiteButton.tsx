@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { updateSite } from "@/app/(dashboard)/sites/actions";
 import SiteForm from "@/components/SiteForm";
+import { BUTTON_SECONDARY } from "@/components/ui/styles";
 
 type EditableSite = {
   id: string;
@@ -22,7 +23,7 @@ export default function EditSiteButton({ site }: { site: EditableSite }) {
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
-        className="rounded border border-line-strong px-3 py-1 text-sm hover:bg-panel max-sm:min-h-11"
+        className={BUTTON_SECONDARY}
       >
         Edit
       </button>

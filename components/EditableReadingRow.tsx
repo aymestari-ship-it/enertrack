@@ -4,13 +4,19 @@ import { useState, useTransition } from "react";
 import { deleteReading, updateReading } from "@/app/(dashboard)/my-site/actions";
 import type { Reading } from "@/components/ReadingsTable";
 import { ACTIONS_CELL, CELL, ROW, VALUE_CELL } from "@/components/readingsTableStyles";
+import {
+  BUTTON_COMPACT,
+  BUTTON_DANGER,
+  BUTTON_PRIMARY,
+  BUTTON_SECONDARY,
+  FIELD,
+  FIELD_COMPACT,
+} from "@/components/ui/styles";
 import { ENERGY_UNITS, isEnergyType } from "@/lib/energy";
 import { formatNumber } from "@/lib/format";
 
-// Below 640 px: 16 px text (no iOS zoom on focus) and 44 px touch targets.
-const INPUT = "rounded border border-line-strong bg-surface px-2 py-1 max-sm:min-h-11 max-sm:text-base";
-const MOBILE_BUTTON = "max-sm:min-h-11 max-sm:rounded max-sm:border max-sm:border-line max-sm:px-4";
-const LINK_BUTTON = `text-brand hover:underline disabled:opacity-50 ${MOBILE_BUTTON}`;
+// 16 px fields and 44 px buttons on mobile; compact from 640 px up.
+const INPUT = `${FIELD} ${FIELD_COMPACT}`;
 
 export default function EditableReadingRow({
   reading,
@@ -99,20 +105,20 @@ export default function EditableReadingRow({
         </td>
         <td className={ACTIONS_CELL}>
           {editing ? (
-            <form id={formId} onSubmit={handleSave} className="inline-flex gap-3">
-              <button type="submit" disabled={pending} className={LINK_BUTTON}>
+            <form id={formId} onSubmit={handleSave} className="inline-flex gap-2">
+              <button type="submit" disabled={pending} className={`${BUTTON_PRIMARY} ${BUTTON_COMPACT}`}>
                 {pending ? "Saving…" : "Save"}
               </button>
-              <button type="button" disabled={pending} onClick={() => setEditing(false)} className={`text-muted hover:underline ${MOBILE_BUTTON}`}>
+              <button type="button" disabled={pending} onClick={() => setEditing(false)} className={`${BUTTON_SECONDARY} ${BUTTON_COMPACT}`}>
                 Cancel
               </button>
             </form>
           ) : (
-            <span className="inline-flex gap-3">
-              <button type="button" disabled={pending} onClick={startEdit} className={LINK_BUTTON}>
+            <span className="inline-flex gap-2">
+              <button type="button" disabled={pending} onClick={startEdit} className={`${BUTTON_SECONDARY} ${BUTTON_COMPACT}`}>
                 Edit
               </button>
-              <button type="button" disabled={pending} onClick={handleDelete} className={`text-danger hover:underline disabled:opacity-50 ${MOBILE_BUTTON}`}>
+              <button type="button" disabled={pending} onClick={handleDelete} className={`${BUTTON_DANGER} ${BUTTON_COMPACT}`}>
                 {pending ? "…" : "Delete"}
               </button>
             </span>

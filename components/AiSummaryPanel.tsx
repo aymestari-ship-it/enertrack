@@ -2,6 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { EmptyState, ErrorMessage, Spinner } from "@/components/ui/Feedback";
+import { BUTTON_PRIMARY } from "@/components/ui/styles";
 import { formatTimestampUtc } from "@/lib/format";
 
 export type AiSummary = {
@@ -47,35 +49,31 @@ export default function AiSummaryPanel({
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <button
-          type="button"
-          onClick={handleGenerate}
-          disabled={pending}
-          className="rounded bg-brand px-5 py-2 font-semibold text-white hover:bg-brand-hover disabled:opacity-60"
-        >
+      <div className="flex flex-col items-start gap-3">
+        <button type="button" onClick={handleGenerate} disabled={pending} className={BUTTON_PRIMARY}>
+          {pending && <Spinner />}
           {pending ? "Generating…" : "Generate AI summary"}
         </button>
-        {error && <p className="mt-2 text-sm text-danger">{error}</p>}
+        {error && <ErrorMessage>{error}</ErrorMessage>}
       </div>
 
-      <div className="rounded border border-line bg-surface p-4" aria-live="polite">
+      <div aria-live="polite">
         {latest ? (
-          <>
-            <p className="leading-relaxed">{latest.summary_text}</p>
+          <div className="rounded-lg border border-line border-l-4 border-l-brand bg-surface p-4">
+            <p className="leading-relaxed text-ink">{latest.summary_text}</p>
             <p className="mt-2 text-xs text-subtle">{formatTimestampUtc(latest.created_at)}</p>
-          </>
+          </div>
         ) : (
-          <p className="text-sm text-subtle">No summary yet.</p>
+          <EmptyState>No summary yet.</EmptyState>
         )}
       </div>
 
       {previous.length > 0 && (
         <div>
-          <h3 className="mb-2 text-sm font-semibold">Previous summaries</h3>
+          <h3 className="mb-2 text-sm font-semibold text-muted">Previous summaries</h3>
           <ul className="flex flex-col gap-2">
             {previous.map((s) => (
-              <li key={s.id} className="rounded border border-line bg-surface p-3 text-sm">
+              <li key={s.id} className="rounded-lg border border-line bg-canvas p-3 text-sm">
                 <p className="text-ink">{s.summary_text}</p>
                 <p className="mt-1 text-xs text-subtle">{formatTimestampUtc(s.created_at)}</p>
               </li>

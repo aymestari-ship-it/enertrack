@@ -4,6 +4,8 @@ import AppHeader, { navLinksFor } from "@/components/AppHeader";
 import ArchiveSiteButton from "@/components/ArchiveSiteButton";
 import EditSiteButton from "@/components/EditSiteButton";
 import NewSiteForm from "@/components/NewSiteForm";
+import { EmptyState, ErrorMessage } from "@/components/ui/Feedback";
+import { BADGE_BRAND, BADGE_NEUTRAL, CARD, MAIN, PAGE, PAGE_TITLE } from "@/components/ui/styles";
 import { getCurrentProfile } from "@/lib/auth";
 import { formatNumber } from "@/lib/format";
 import { ROLE_LABELS } from "@/lib/roles";
@@ -35,43 +37,42 @@ export default async function SitesPage() {
   const isDirection = me.role === "direction";
 
   return (
-    <div className="flex flex-1 flex-col bg-canvas text-ink">
+    <div className={PAGE}>
       <AppHeader
         subtitle={`${ROLE_LABELS[me.role]} · Sites`}
         links={navLinksFor(me.role)}
       />
 
-      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-6">
+      <main className={`${MAIN} max-w-4xl`}>
         <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-          <h1 className="text-xl font-bold">Sites</h1>
+          <h1 className={PAGE_TITLE}>Sites</h1>
           {isDirection && <NewSiteForm />}
         </div>
 
         {error ? (
-          <p className="text-sm text-danger">Sites could not be loaded.</p>
+          <ErrorMessage>Sites could not be loaded.</ErrorMessage>
         ) : sites.length === 0 ? (
-          <p className="text-sm text-muted">No sites yet.</p>
+          <EmptyState>No sites yet.</EmptyState>
         ) : (
           <ul className="flex flex-col gap-3">
             {sites.map((site) => (
               <li
                 key={site.id}
-                className={`flex flex-wrap items-center justify-between gap-3 rounded border border-line p-4 ${
-                  site.status === "archived" ? "bg-panel text-subtle" : "bg-surface"
+                className={`${CARD} flex flex-wrap items-center justify-between gap-3 p-4 sm:px-5 ${
+                  site.status === "archived" ? "bg-panel shadow-none" : ""
                 }`}
               >
-                <Link href={`/sites/${site.id}`} className="group flex-1">
-                  <p className="font-semibold group-hover:underline">
+                <Link
+                  href={`/sites/${site.id}`}
+                  className="group min-w-0 flex-1 rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                >
+                  <p className="flex flex-wrap items-center gap-2 font-semibold text-ink group-hover:text-brand">
                     {site.name}
-                    <span
-                      className={`ml-2 rounded px-2 py-0.5 text-xs font-normal ${
-                        site.status === "active" ? "bg-brand-soft text-brand-ink" : "bg-line text-muted"
-                      }`}
-                    >
+                    <span className={site.status === "active" ? BADGE_BRAND : BADGE_NEUTRAL}>
                       {site.status === "active" ? "Active" : "Archived"}
                     </span>
                   </p>
-                  <p className="text-sm text-muted">
+                  <p className="mt-0.5 text-sm text-subtle">
                     {site.location ?? "No location"}
                     {site.monthly_budget_kwh != null &&
                       ` · Budget ${formatNumber(Number(site.monthly_budget_kwh))} kWh/month`}

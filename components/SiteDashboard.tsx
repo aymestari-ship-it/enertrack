@@ -2,9 +2,12 @@ import type { ReactNode } from "react";
 import AiSummaryPanel from "@/components/AiSummaryPanel";
 import ConsumptionChart from "@/components/ConsumptionChart";
 import ReadingsTable, { type ReadingsEditing } from "@/components/ReadingsTable";
+import { ErrorMessage } from "@/components/ui/Feedback";
+import { CARD, CARD_BODY, SECTION_TITLE } from "@/components/ui/styles";
 import type { SiteDashboardData } from "@/lib/siteDashboard";
 
-const SECTION = "rounded border border-line bg-panel p-5";
+const SECTION = `${CARD} ${CARD_BODY}`;
+const TITLE = `mb-4 ${SECTION_TITLE}`;
 
 // Shared by /my-site (reading form + Edit/Delete) and /sites/[id] (read-only).
 export default function SiteDashboard({
@@ -18,7 +21,7 @@ export default function SiteDashboard({
   readingForm?: ReactNode;
   readingsEditing?: ReadingsEditing;
 }) {
-  const loadError = <p className="text-sm text-danger">Readings could not be loaded.</p>;
+  const loadError = <ErrorMessage>Readings could not be loaded.</ErrorMessage>;
   // Only /my-site declares two columns (form + charts). Without the form, spanning 2
   // columns would create an implicit second column and squeeze the charts to half width.
   const fullWidth = readingForm ? "md:col-span-2" : "";
@@ -28,17 +31,17 @@ export default function SiteDashboard({
       {readingForm && <section className={`self-start ${SECTION}`}>{readingForm}</section>}
 
       <section className={SECTION}>
-        <h2 className="mb-3 font-bold">Consumption by energy type</h2>
+        <h2 className={TITLE}>Consumption by energy type</h2>
         {data.readingsError ? loadError : <ConsumptionChart readings={data.readings} />}
       </section>
 
       <section className={`${SECTION} ${fullWidth}`}>
-        <h2 className="mb-3 font-bold">AI summary</h2>
+        <h2 className={TITLE}>AI summary</h2>
         <AiSummaryPanel siteId={siteId} summaries={data.summaries} />
       </section>
 
       <section className={`${SECTION} ${fullWidth}`}>
-        <h2 className="mb-3 font-bold">Readings</h2>
+        <h2 className={TITLE}>Readings</h2>
         {data.readingsError ? loadError : <ReadingsTable readings={data.readings} editing={readingsEditing} />}
       </section>
     </div>

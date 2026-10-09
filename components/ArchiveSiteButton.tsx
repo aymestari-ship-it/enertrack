@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { archiveSite } from "@/app/(dashboard)/sites/actions";
+import { BUTTON_DANGER } from "@/components/ui/styles";
 
 export default function ArchiveSiteButton({ siteId, siteName }: { siteId: string; siteName: string }) {
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +23,7 @@ export default function ArchiveSiteButton({ siteId, siteName }: { siteId: string
         type="button"
         onClick={handleArchive}
         disabled={pending}
-        className="rounded border border-line-strong px-3 py-1 text-sm hover:bg-panel disabled:opacity-60 max-sm:min-h-11"
+        className={BUTTON_DANGER}
       >
         {pending ? "Archiving…" : "Archive"}
       </button>

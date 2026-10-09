@@ -1,5 +1,6 @@
 import EditableReadingRow from "@/components/EditableReadingRow";
 import { CELL, ROW, TABLE, TBODY, THEAD, VALUE_CELL } from "@/components/readingsTableStyles";
+import { EmptyState } from "@/components/ui/Feedback";
 import { ENERGY_UNITS, isEnergyType } from "@/lib/energy";
 import { formatNumber } from "@/lib/format";
 
@@ -21,17 +22,17 @@ export default function ReadingsTable({
   editing?: ReadingsEditing;
 }) {
   if (!readings.length) {
-    return <p className="text-sm text-muted">No readings yet.</p>;
+    return <EmptyState>No readings yet.</EmptyState>;
   }
 
   return (
     <table className={TABLE}>
       <thead className={THEAD}>
         <tr className="border-b border-line">
-          <th className="py-2">Date</th>
-          <th className="py-2">Energy type</th>
-          <th className="py-2 text-right">Value</th>
-          {editing && <th className="py-2 pl-4 text-right">Actions</th>}
+          <th className="pb-2 pr-3 font-medium">Date</th>
+          <th className="pb-2 pr-3 font-medium">Energy type</th>
+          <th className="pb-2 text-right font-medium">Value</th>
+          {editing && <th className="pb-2 pl-4 text-right font-medium">Actions</th>}
         </tr>
       </thead>
       <tbody className={TBODY}>

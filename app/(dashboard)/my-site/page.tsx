@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import AppHeader from "@/components/AppHeader";
 import ReadingForm from "@/components/ReadingForm";
 import SiteDashboard from "@/components/SiteDashboard";
+import { MAIN, PAGE, PAGE_TITLE } from "@/components/ui/styles";
 import { getCurrentProfile } from "@/lib/auth";
 import { getSiteDashboardData } from "@/lib/siteDashboard";
 import { createClient } from "@/lib/supabase/server";
@@ -19,16 +20,14 @@ export default async function MySitePage() {
   const today = new Date().toISOString().slice(0, 10);
 
   return (
-    <div className="flex flex-1 flex-col bg-canvas text-ink">
+    <div className={PAGE}>
       <AppHeader subtitle="Site Manager · My Site" />
 
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
-        <h1 className="mb-6 text-xl font-bold">
-          {site?.name ?? "My site"}
-          {site?.location && (
-            <span className="ml-2 text-base font-normal text-muted">{site.location}</span>
-          )}
-        </h1>
+      <main className={`${MAIN} max-w-5xl`}>
+        <div className="mb-6">
+          <h1 className={PAGE_TITLE}>{site?.name ?? "My site"}</h1>
+          {site?.location && <p className="mt-1 text-sm text-subtle">{site.location}</p>}
+        </div>
 
         <SiteDashboard
           siteId={me.site_id}
