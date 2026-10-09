@@ -5,6 +5,8 @@ import ConsumptionChart from "@/components/ConsumptionChart";
 import ReadingsTable, { type Reading, type ReadingsEditing } from "@/components/ReadingsTable";
 import { ENERGY_COLORS } from "@/components/energyColors";
 import { PERIODS, inPeriod, periodRange, type Period } from "@/components/readingFilters";
+import SelectionSummary from "@/components/SelectionSummary";
+import { TYPE_LABELS } from "@/components/selectionStats";
 import { ErrorMessage } from "@/components/ui/Feedback";
 import {
   BUTTON_SECONDARY,
@@ -20,13 +22,6 @@ import { ENERGY_TYPES, type EnergyType } from "@/lib/energy";
 
 const SECTION = `${CARD} ${CARD_BODY}`;
 const TITLE = `mb-4 ${SECTION_TITLE}`;
-
-const TYPE_LABELS: Record<EnergyType, string> = {
-  electricity: "Electricity",
-  gas: "Gas",
-  fuel: "Fuel",
-  water: "Water",
-};
 
 function CheckIcon() {
   return (
@@ -163,6 +158,10 @@ export default function ReadingsExplorer({
             </div>
           </div>
         </div>
+      )}
+
+      {!readingsError && readings.length > 0 && (
+        <SelectionSummary readings={filtered} types={types} period={period} today={today} />
       )}
 
       <div className={`grid gap-6 ${readingForm ? "md:grid-cols-[1fr_2fr]" : ""}`}>
